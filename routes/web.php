@@ -37,14 +37,17 @@ use App\Models\Setting;
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
+Route::get('login-with-otp', function () {
+    return view('frontend.auth.login_otp');
+})->name('login.otp');
+
 Route::get('forgot-password-step1', function () {
     return view('frontend.auth.forgot_password_step1');
 })->name('forgot_password_step1');
 
-
-Route::get('login-with-otp', function () {
-    return view('frontend.auth.login_with_otp');
-})->name('login.otp');
+// Route::get('login-with-otp', function () {
+//     return view('frontend.auth.login_with_otp');
+// })->name('login.otp');
 
 Route::get('contact', function () {
     return view('frontend.contact');
@@ -152,6 +155,8 @@ Route::middleware(['user.auth'])->group(function () {
         Route::post('user/add-review', 'addReview')->name('add.review');
 
         Route::get('user/order-details/{id}', 'userOrderDetails')->name('user.order.details');
+        
+        Route::post('/apply-exit-offer', 'applyExitOffer')->name('apply.exit.offer');
     });
 
     Route::controller(AddressController::class)->group(function () {

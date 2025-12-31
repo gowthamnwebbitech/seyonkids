@@ -54,7 +54,11 @@
 
                                         <!-- Login Button -->
                                         <button type="submit" class="btn-login">Login</button>
-
+                                        <div class="text-center mt-3">
+                                            <a href="{{ route('login.otp') }}" class="forgot-password">
+                                                Login With OTP
+                                            </a>
+                                        </div>
                                         <!-- Divider -->
                                         <div class="divider-container">
                                             <div class="divider-line"></div>

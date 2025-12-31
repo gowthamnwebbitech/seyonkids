@@ -179,7 +179,7 @@
 
                                     <div class="mb-3 col-md-3">
                                         <label class="form-label">Actual Price</label>
-                                        <input type="text" name="actual_price" class="form-control"
+                                        <input type="number" name="actual_price" class="form-control"
                                             value="{{ old('actual_price', $product->orginal_rate) }}">
                                         @error('actual_price')
                                             <div class="text-danger">{{ $message }}</div>
@@ -188,7 +188,7 @@
 
                                     <div class="mb-3 col-md-3">
                                         <label class="form-label">Offer Price</label>
-                                        <input type="text" name="offer_price" class="form-control"
+                                        <input type="number" name="offer_price" class="form-control"
                                             value="{{ old('offer_price', $product->offer_price) }}">
                                         @error('offer_price')
                                             <div class="text-danger">{{ $message }}</div>
@@ -196,13 +196,19 @@
                                     </div>
 
                                     <div class="mb-3 col-md-3">
-                                        <label class="form-label">Discount (%)</label>
-                                        <input type="text" name="discount" class="form-control"
-                                            value="{{ old('discount', $product->discount) }}" readonly>
-                                        @error('discount')
-                                            <div class="text-danger">{{ $message }}</div>
-                                        @enderror
+                                        <label class="form-label">Discount</label>
+
+                                        <div class="input-group">
+                                            <input type="text" id="discount_text" class="form-control" readonly
+                                                value="{{ old('discount', $product->discount ?? '') }}">
+                                            <span class="input-group-text">%</span>
+                                        </div>
+
+                                        <!-- Hidden numeric value for DB -->
+                                        <input type="hidden" name="discount"
+                                            value="{{ old('discount', $product->discount ?? '') }}">
                                     </div>
+
                                 </div>
 
                                 <!-- Images -->
@@ -409,11 +415,17 @@ $(document).ready(function () {
         let offer  = parseFloat($('[name="offer_price"]').val()) || 0;
 
         if (offer > 0 && offer < actual) {
-            $('[name="discount"]').val(((actual - offer) / actual * 100).toFixed(2));
+            let discount = ((actual - offer) / actual * 100).toFixed(0);
+
+            $('#discount_text').val(discount);     // UI
+            $('[name="discount"]').val(discount);  // DB
         } else {
+            $('#discount_text').val('');
             $('[name="discount"]').val('');
         }
     });
+
+
       $(document).on('click', '.delete-image', function() {
             var imageId = $(this).data('id');
             var imageContainer = $(this).closest('.image-container');

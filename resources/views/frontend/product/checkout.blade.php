@@ -227,6 +227,54 @@
         .place-order-new:hover {
             background: #5b21b6;
         }
+        /* Buttons */
+        .common-btn1 {
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            border: none;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            background: #dc3545;
+            color: white;
+        }
+        .common-btn2 {
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            border: none;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            background: #ffffff;
+            color: rgb(31, 219, 22);
+            border: solid 1px rgb(31, 219, 22);
+        }
+        .common-btn2:hover {
+            background: rgb(31, 219, 22);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(32, 219, 22, 0.19);
+            color: white;
+        }
+        .common-btn1:hover {
+            background: #c82333;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(220, 53, 69, 0.3);
+            color: white;
+        }
+
+        .common-btn1 i {
+            font-size: 14px;
+        }
 
     </style>
     <!-- Breadcrumb Section -->
@@ -406,7 +454,8 @@
                                     $subtotal += $cartItems->first()->giftWrap->price;
                                 }
                                 $shipping_cost = $primary_address->shippingPrice?->shipping_cost ?? 90;
-                                $subtotal += $shipping_cost;
+                                // $subtotal += $shipping_cost;
+                                $sub_total = $subtotal;
                             @endphp
 
                             <h4 class="mb-4 fw-bold">Your Order</h4>
@@ -599,6 +648,10 @@
 
                                     $subtotal = $subtotal + $shipping_cost;
                                 @endphp
+                                @php
+                                    $exitOffer = session('exit_offer');
+                                    $exitDiscount = $exitOffer['amount'] ?? 0;
+                                @endphp
                                 @if (isset($shipping_cost))
                                     <div class="d-flex justify-content-between align-items-center mb-2">
                                         <h6 class="mb-0">Shipping Cost</h6>
@@ -615,11 +668,24 @@
                                         <span class="total-amount">(-) ₹{{ $discount }}</span>
                                     </div>
                                 @endif
+                               
+                                @if($exitDiscount > 0)
+                                    <div class="d-flex justify-content-between align-items-center mb-2">
+                                        <h6 class="mb-0 text-success">Surprise Offer</h6>
+                                        <span class="total-amount text-success">(-) ₹{{ $exitDiscount }}</span>
+                                    </div>
+
+                                    @php
+                                        $subtotal -= $exitDiscount;
+                                    @endphp
+                                @endif
+
                                 <div class="d-flex justify-content-between align-items-center border-top pt-2">
                                     <h5 class="mb-0 fw-bold">Total</h5>
                                     <span
                                         class="total-amount fw-bold text-danger">₹{{ number_format($subtotal, 2) }}</span>
                                 </div>
+                                <span class="mt-4" style="font-size:13px">All the prices are inclusive of tax.</span>
                             </div>
 
                             <button type="submit" class="btn btn-danger w-100 mt-3 place-order-btn">
@@ -803,6 +869,25 @@
                     </div>
                 </div>
             </div>
+
+            <div class="modal fade" id="exitOfferModal" tabindex="-1">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Wait! Don’t leave 😲</h5>
+                        </div>
+                        <div class="modal-body text-center">
+                            <p class="fw-bold">Why do you want to exit now?</p>
+                            <p class="text-success fs-5">🎁 We have an ₹30 surprise offer for you!</p>
+                        </div>
+                        <div class="modal-footer text-center">
+                            <button class="common btn common-btn1" data-bs-dismiss="modal">Exit</button>
+                            <button class="common btn common-btn2" id="applyExitOffer">Apply Offer</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
         </div>
     </section>
 
@@ -884,7 +969,7 @@
             animateCounter(
                 "counter",
                 0,
-                {{ $subtotal }},
+                {{ $sub_total }},
                 3000,
                 @json($milestones)  
             );
@@ -1067,6 +1152,51 @@
                 couriers.prop('disabled', false);
                 $('#indiaPost').prop('checked', false);
             }
+        });
+        $('#place-order').on('submit', function () {
+            exitShown = true;
+        });
+    </script>
+    <script>
+        let exitShown = false;
+        let isInitialLoad = true;
+        let exitOfferApplied = {{ session()->has('exit_offer') ? 'true' : 'false' }};
+
+        // Push history AFTER page fully loads
+        window.addEventListener('load', function () {
+            history.pushState({ checkout: true }, "", location.href);
+            isInitialLoad = false;
+        });
+
+        // Detect BACK button only
+        window.addEventListener('popstate', function (event) {
+            if (
+                !isInitialLoad &&
+                !exitShown &&
+                !exitOfferApplied
+            ) {
+                exitShown = true;
+
+                // Show popup
+                $('#exitOfferModal').modal('show');
+
+                // Stop actual navigation
+                history.pushState({ checkout: true }, "", location.href);
+            }
+        });
+
+        // Apply exit offer
+        $('#applyExitOffer').on('click', function () {
+            $.ajax({
+                url: "{{ route('apply.exit.offer') }}",
+                type: "POST",
+                data: {
+                    _token: "{{ csrf_token() }}"
+                },
+                success: function () {
+                    location.reload();
+                }
+            });
         });
     </script>
 @endsection

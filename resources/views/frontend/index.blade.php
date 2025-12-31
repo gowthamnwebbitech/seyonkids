@@ -225,7 +225,7 @@
                                         <img src="{{ asset($category->category_image) }}" alt="{{ $category->name }}"
                                             class="img-fluid mb-3 rounded">
                                         <p class="mb-0 fw-semibold">
-                                            <a href="{{ route('subcategory.list', $category->id) }}"
+                                            <a href="{{ route('category.list') }}?selected_categories[]={{ $category->id }}"
                                                 class="text-decoration-none text-dark">{{ $category->name }}</a>
                                         </p>
                                     </div>
