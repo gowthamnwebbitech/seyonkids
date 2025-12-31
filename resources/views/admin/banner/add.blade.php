@@ -24,7 +24,12 @@
 
                 <!-- Image -->
                 <div class="mb-3">
-                    <label class="form-label">Banner Image</label>
+                    <label class="form-label">
+                        Banner Image
+                        <span class="text-muted">
+                            (Recommended size: 648 × 420 px, Max file size: 1 MB)
+                        </span>
+                    </label>
                     <input type="file" name="image" class="form-control" accept="image/*" required>
                 </div>
 

@@ -68,7 +68,7 @@
                                 </div>
                                 <div class="row">
                                     <div class="mb-3 col-md-6">
-                                        <label class="form-label">SubCategory Image</label>
+                                        <label class="form-label">SubCategory Image (Size: 300 × 300 px, Max file size: 1 MB)</label>
                                         <input type="file" name="subcategory_image" class="form-control image_input" id="subcategory_image" required>
                                         <br>
                                         <img id="previewImage" 

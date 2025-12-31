@@ -62,7 +62,11 @@
                                         @enderror
                                     </div>
                                     <div class="mb-3 col-md-6">
-                                        <label class="form-label">Image</label>
+                                        <label class="form-label">Image
+                                            <span class="text-muted">
+                                                (Recommended size: 1600 × 2400 px, Max file size: 1 MB)
+                                            </span>
+                                        </label>
                                         <input type="file" name="image" class="form-control"
                                             @if (!$shop_by_age->image) required @endif />
                                         @if (!$shop_by_age->image)

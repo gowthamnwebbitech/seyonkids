@@ -53,6 +53,14 @@
                                     @php
                                         $cta = $call_to_action->where('name', $type)->first();
                                     @endphp
+                                    @php
+                                        $imageSizes = [
+                                            'call_to_action_main' => '600 × 600 px, Max 1 MB)',
+                                            'call_to_action_sub'  => '704 × 320 px, Max 1 MB)',
+                                            'call_to_action_sub1' => '704 × 320 px, Max 1 MB)',
+                                            'call_to_action_sub2' => '704 × 320 px, Max 1 MB)',
+                                        ];
+                                    @endphp
 
                                     <h4 class="mt-4">{{ ucfirst(str_replace('_', ' ', $type)) }}</h4>
                                     <div class="row border p-3 mb-3 rounded">
@@ -80,7 +88,13 @@
 
                                         <!-- Image -->
                                         <div class="mb-3 col-md-6">
-                                            <label class="form-label">Image</label>
+                                            <label class="form-label">
+                                                Image
+                                                <span class="text-muted">
+                                                    (Recommended: {{ $imageSizes[$type] ?? 'Max 1 MB' }})
+                                                </span>
+                                            </label>
+
                                             <input type="file" name="image[{{ $type }}]" class="form-control">
                                             @if (!empty($cta->image))
                                                 <img src="{{ asset($cta->image) }}" width="100" class="mt-2 preview">

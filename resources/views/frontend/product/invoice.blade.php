@@ -79,7 +79,7 @@
 
     <!-- HEADER -->
     <div class="header mb-20">
-        <img src="{{ public_path('frontend/img/logo.png') }}">
+        <img src="{{ public_path('frontend/img/logo.png') }}" width="120">
         <div class="invoice-title">INVOICE</div>
     </div>
 

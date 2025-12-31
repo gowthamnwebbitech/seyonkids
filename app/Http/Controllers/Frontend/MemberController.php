@@ -167,4 +167,19 @@ class MemberController extends Controller
         
         return redirect()->back()->with('danger', 'please upload your profile image!');
     } 
+
+    // CheckoutController.php
+
+    public function applyExitOffer(Request $request)
+    {
+        if (!session()->has('exit_offer')) {
+            session()->put('exit_offer', [
+                'amount' => 30
+            ]);
+        }
+
+        return response()->json([
+            'status' => 'success'
+        ]);
+    }
 }

@@ -72,7 +72,10 @@
                                         <input type="text" name="name" class="form-control" value="{{ $category->name }}" required>
                                     </div>
                                     <div class="mb-3 col-md-6">
-                                        <label class="form-label">Category Image</label>
+                                        <label class="form-label">
+                                            Category Image 
+                                            <span class="text-muted">(Size: 300 × 300 px, Max file size: 1 MB)</span>
+                                        </label>
                                         <input type="file" name="category_image" class="form-control" @if (!$category->category_image) required @endif />
                                         @if (!$category->category_image) <br> <div id="uploaded_image2"></div> @endif <br>
                                         @if ($category->category_image)

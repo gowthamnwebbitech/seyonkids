@@ -186,7 +186,7 @@
                                     </div>
                                     <div class="mb-3 col-md-3">
                                         <label class="form-label">Actual Price</label>
-                                        <input type="text" name="actual_price" class="form-control"
+                                        <input type="number" name="actual_price" class="form-control"
                                             placeholder="Ex: 1000" value="{{ old('actual_price') }}" required>
                                         @error('actual_price')
                                             <div class="text-danger">{{ $message }}</div>
@@ -194,19 +194,23 @@
                                     </div>
                                     <div class="mb-3 col-md-3">
                                         <label class="form-label">Offer Price</label>
-                                        <input type="text" name="offer_price" class="form-control"
+                                        <input type="number" name="offer_price" class="form-control"
                                             placeholder="Ex: 850" value="{{ old('offer_price') }}" required>
                                         @error('offer_price')
                                             <div class="text-danger">{{ $message }}</div>
                                         @enderror
                                     </div>
                                     <div class="mb-3 col-md-3">
-                                        <label class="form-label">Discount (%)</label>
-                                        <input type="text" name="discount" class="form-control" readonly
-                                            placeholder="Ex: 10" value="{{ old('discount') }}" required>
-                                        @error('discount')
-                                            <div class="text-danger">{{ $message }}</div>
-                                        @enderror
+                                        <div class="form-group">
+                                            <label>Discount</label>
+                                            <div class="input-group">
+                                                <input type="text" class="form-control" id="discount_text" readonly>
+                                                <span class="input-group-text">%</span>
+                                            </div>
+
+                                            <!-- Hidden field for DB -->
+                                            <input type="hidden" name="discount">
+                                        </div>
                                     </div>
 
                                     {{-- <div class="mb-3 col-md-3">
@@ -220,7 +224,9 @@
 
                                 <div class="row">
                                     <div class="mb-3 col-md-6">
-                                        <label class="form-label">Thumbnail Image</label>
+                                        <label class="form-label">
+                                            Thumbnail Image (size: 1600 × 1600 px, Max 1 MB)
+                                        </label>
                                         <input type="file" name="file1" class="form-control image_input"
                                             id="file1" required>
                                         <div id="imagePreview"></div>
@@ -229,8 +235,9 @@
                                         @enderror
                                     </div>
                                     <div class="mb-3 col-md-6">
-                                        <label class="form-label">Gallery Images</label>
-                                        <input type="file" name="file2[]" class="form-control image_input"
+                                        <label class="form-label">
+                                            Gallery Images (size: 1600 × 1600 px, Max 1 MB each)
+                                        </label>                                        <input type="file" name="file2[]" class="form-control image_input"
                                             id="file2" multiple />
                                         <div id="imagePreviews" class="d-flex flex-wrap gap-2 mt-2"></div>
 
@@ -513,20 +520,22 @@
 <script>
     $(document).ready(function() {
         function calculateOfferPercentage() {
-            var originalPrice = parseFloat($("[name='actual_price']").val()) || 0;
-            var offerPrice = parseFloat($("[name='offer_price']").val()) || 0;
+            let originalPrice = parseFloat($("[name='actual_price']").val()) || 0;
+            let offerPrice    = parseFloat($("[name='offer_price']").val()) || 0;
 
             if (originalPrice > 0 && offerPrice > 0 && offerPrice < originalPrice) {
-                var discountPercent = ((originalPrice - offerPrice) / originalPrice) * 100;
-                $("[name='discount']").val(discountPercent.toFixed(2));
+                let discountPercent = ((originalPrice - offerPrice) / originalPrice * 100).toFixed(0);
+
+                $('#discount_text').val(discountPercent);
+                $("[name='discount']").val(discountPercent); // numeric value
             } else {
+                $('#discount_text').val('');
                 $("[name='discount']").val('');
             }
         }
 
-        $("[name='offer_price'], [name='actual_price']").on("input", function() {
-            calculateOfferPercentage();
-        });
+        $("[name='offer_price'], [name='actual_price']").on("input", calculateOfferPercentage);
+
 
         $('#product_type').change(function() {
             var selectedType = $(this).val();
