@@ -67,7 +67,7 @@
 </div>
 
 <!-- Header: logo + search + actions -->
-<div class="header-main py-3">
+<div class="header-main">
     <div class="container">
         <div class="row align-items-center justify-content-between">
             <!-- Logo -->
@@ -221,10 +221,10 @@
             @guest
                 <!-- Show login/signup button if user is not logged in -->
                 <div
-                    class="col-10 col-md-10 col-lg-4 d-flex justify-content-end align-items-center gap-3 order-2 order-lg-3 header-actions">
-                    <a href="{{ route('user.login') }}" class="d-inline-flex align-items-center">
+                    class="signin col-10 col-md-10 col-lg-4 d-flex justify-content-end align-items-center gap-3 order-2 order-lg-3 header-actions">
+                    <a href="{{ route('user.login') }}" class="d-inline-flex align-items-center hero-cta">
                         <i class="fa-regular fa-user me-2" aria-hidden="true"></i>
-                        <span class="text-label d-none d-lg-inline">Sign Up/Sign In</span>
+                        <span class="text-label d-none d-lg-inline">Sign In</span>
                     </a>
                 </div>
             @endguest
