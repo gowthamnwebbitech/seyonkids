@@ -2,26 +2,19 @@
     <div class="container mb-5">
         <div class="row">
             <!-- About Us -->
-            <div class="col-md-3 footer-logo wit">
-                <img src="{{ asset('frontend/img/logo.png') }}" alt="Logo">
-                <h3>About Us</h3>
+            <div class="col-md-4 footer-logo wit">
+                <img src="{{ asset('frontend/img/footer-logo.png') }}" alt="Logo">
                 <p class="text-white">At Cats and Cuddles, we’re more than just a small business - we’re a family. And we
                     want you to be a
                     part of it!</p>
             </div>
 
-            <!-- Contact Us -->
-            <div class="col-md-3 wit">
-                <h3>Contact US</h3>
-                <p><i class="fa-solid fa-envelope"></i><a href="mailto:Seyontoys@gmail.com">Seyontoys@gmail.com</a></p>
-                <p><i class="fa-solid fa-location-dot"></i>26/7, 2ndFloor,<br> Nachimuthupudur 1STcross st,<br> Ellis Nagar, Dharapuram,<br> Tiruppur-638657</p>
-                <p><i class="fa-solid fa-phone"></i><a href="tel:+917845630620">+91 78456 30620</a></p>
-            </div>
+
 
             <!-- Quick Links -->
-            <div class="col-md-2 wit">
-                <h3>Quick Links</h3>
-                <div class="quick-links">
+            <div class="col-md-3 wit">
+                <h3 class="mb-4">Quick Links</h3>
+                <div class="quick-links ms-2">
                     @php
                         $categories = \App\Models\ProductCategory::where('status', 1)->get();
                     @endphp
@@ -32,20 +25,18 @@
                     <a href="{{ route('terms_condition') }}">Terms & Conditions</a>
                 </div>
             </div>
-
-            <!-- Newsletter -->
-            <div class="col-md-4 newsletter wit">
-                <h3>Newsletter</h3>
-                <div class="news-box d-flex">
-                    <input class="input-box" type="email" placeholder="Enter email address">
-                    <button type="button">SIGN ME UP</button>
-                </div>
+             <!-- Contact Us -->
+            <div class="col-md-4 wit">
+                <h3 class="mb-4">Contact US</h3>
+                <p><i class="fa-solid fa-envelope"></i><a href="mailto:Seyontoys@gmail.com">Seyontoys@gmail.com</a></p>
+                <p><i class="fa-solid fa-location-dot"></i>26/7, 2ndFloor,<br> Nachimuthupudur 1STcross st,<br> Ellis Nagar, Dharapuram,<br> Tiruppur-638657</p>
+                <p><i class="fa-solid fa-phone"></i><a href="tel:+917845630620">+91 78456 30620</a></p>
             </div>
         </div>
     </div>
     <div class="bottom-foot">
         <div class="container">
-            <div class="row mt-4">
+            <div class="row mt-3">
                 <div class="col-12 text-center">
                     <p>© {{ date('Y') }} Seyonkids. All rights reserved. Developed by <a style="color: #ADB7BC"
                             href="https://webbitech.com/">Webbitech</a></p>
@@ -87,7 +78,7 @@
             }, // tablets
             768: {
                 slidesPerView: 2
-            }, // desktops 
+            }, // desktops
             920: {
                 slidesPerView: 3
             }, // tablets

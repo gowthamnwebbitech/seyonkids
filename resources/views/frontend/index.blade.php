@@ -127,13 +127,13 @@
         });
     </script>
 
-    <div id="preloader">
+    {{-- <div id="preloader">
         <div class="lds-ripple">
             <div></div>
             <div></div>
         </div>
-    </div>
-    <section class="container my-4">
+    </div> --}}
+    <section class="">
         <div id="kidsHero" class="carousel slide hero-wrap" data-bs-ride="carousel" data-bs-interval="3000"
             data-bs-touch="true">
 
@@ -419,7 +419,7 @@
 
     {{-- shop by age --}}
     @if ($shop_by_age->isNotEmpty())
-        <section class="shop-by-age py-5">
+        <section class="shop-by-age py-5 mt-4">
             <div class="container">
                 <h3 class="text-center">Shop By Age</h3>
             </div>
@@ -431,11 +431,10 @@
                             <div class="col-6 col-md-4 col-lg-2 age-card">
                                 <div class="age-thumb">
                                     <a href="{{ route('category.list') }}?shop_by_age_id={{ $shop->id }}">
-                                        <img src="{{ asset($shop->image) }}" alt="{{ $shop->title ?? '' }}"
-                                            class="img-fluid rounded shadow-sm">
+                                        {{-- <img src="{{ asset($shop->image) }}" alt="{{ $shop->title ?? '' }}" class="img-fluid rounded shadow-sm"> --}}
+                                        <p class="mt-2">{{ $shop->title ?? '' }}<br>Collection</p>
                                     </a>
                                 </div>
-                                <p class="mt-2">{{ $shop->title ?? '' }}</p>
                             </div>
                         @endforeach
                     </div>
@@ -457,7 +456,7 @@
             </div>
 
             <!-- Responsive grid: 2 cols on xs, 3 on md, 4 on lg, 5 on xl+ -->
-            <div class="row row-cols-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-5">
+            <div class="best-seller row row-cols-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-5">
                 <!-- CARD -->
                 @foreach ($best_seller as $seller)
                     <div class="col">
@@ -504,7 +503,7 @@
                                     </a>
                                 </div>
                             </div>
-                            <div class="card-body mt-4">
+                            <div class="card-body">
                                 <p class="card-title small text-truncate-2 mb-1">{{ $seller->product_name }}</p>
                                 <div class="price small">
                                     <span class="text-danger fw-semibold">{{ $seller->offer_price }}</span>
@@ -570,7 +569,7 @@
                                                     class="fas fa-shopping-cart"></i></a>
                                         </div>
                                     </div>
-                                    <p class="reel-title h6 mt-2 mb-1">{{ $reel->title ?? '' }}</p>
+                                    <p class="reel-title h6 mt-1 mb-3">{{ $reel->title ?? '' }}</p>
                                 </article>
                             </div>
                         @endforeach
@@ -592,7 +591,7 @@
                                         <a href="#" class="icon"><i class="fas fa-shopping-cart"></i></a>
                                     </div>
                                 </div>
-                                <p class="reel-title h6 mt-2 mb-1">New Arrival Product...</p>
+                                <p class="reel-title h6 mt-2 mb-3">New Arrival Product...</p>
                             </article>
                         </div>
                         <!-- Card 7 -->
@@ -607,7 +606,7 @@
                                         <a href="#" class="icon"><i class="fas fa-shopping-cart"></i></a>
                                     </div>
                                 </div>
-                                <p class="reel-title h6 mt-2 mb-1">Bestseller Item Name...</p>
+                                <p class="reel-title h6 mt-2 mb-3">Bestseller Item Name...</p>
                             </article>
                         </div>
                         <!-- Card 8 -->
@@ -622,7 +621,7 @@
                                         <a href="#" class="icon"><i class="fas fa-shopping-cart"></i></a>
                                     </div>
                                 </div>
-                                <p class="reel-title h6 mt-2 mb-1">Top Rated Product...</p>
+                                <p class="reel-title h6 mt-2 mb-3">Top Rated Product...</p>
                             </article>
                         </div>
                         <!-- Card 9 -->
@@ -637,7 +636,7 @@
                                         <a href="#" class="icon"><i class="fas fa-shopping-cart"></i></a>
                                     </div>
                                 </div>
-                                <p class="reel-title h6 mt-2 mb-1">Customer Favorite...</p>
+                                <p class="reel-title h6 mt-2 mb-3">Customer Favorite...</p>
                             </article>
                         </div>
                         <!-- Card 10 -->
@@ -652,7 +651,7 @@
                                         <a href="#" class="icon"><i class="fas fa-shopping-cart"></i></a>
                                     </div>
                                 </div>
-                                <p class="reel-title h6 mt-2 mb-1">Limited Edition Item...</p>
+                                <p class="reel-title h6 mt-2 mb-3">Limited Edition Item...</p>
                             </article>
                         </div>
                     </div>
@@ -705,10 +704,9 @@
                         <div class="swiper-slide">
                             <div class="new-price-card">
                                 <div class="new-price-img-wrap">
-                                    <img src="{{ asset($shop_by_price->image) }}" alt="Under Rs.100"
-                                        class="img-fluid"><a
-                                        href="{{ route('category.list', ['shop_by_price', $shop_by_price->slug ?? $shop_by_price->title]) }}">
-                                        <span class="new-price-tag tag-red">{{ $shop_by_price->title ?? '' }}</span></a>
+                                    {{-- <img src="{{ asset($shop_by_price->image) }}" alt="Under Rs.100" class="img-fluid"> --}}
+                                    <a href="{{ route('category.list', ['shop_by_price', $shop_by_price->slug ?? $shop_by_price->title]) }}">
+                                        <span class="new-price-tag">{{ $shop_by_price->title ?? '' }}</span></a>
                                 </div>
                             </div>
                         </div>
