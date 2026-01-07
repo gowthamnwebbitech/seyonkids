@@ -33,12 +33,12 @@
 
                                             <!-- OTP inputs container -->
                                             <div class="d-flex gap-2 justify-content-start mb-3">
-                                                <input type="text" maxlength="1" class="otp_input form-control text-center" style="width:45px; height:50px; font-size:20px;">
-                                                <input type="text" maxlength="1" class="otp_input form-control text-center" style="width:45px; height:50px; font-size:20px;">
-                                                <input type="text" maxlength="1" class="otp_input form-control text-center" style="width:45px; height:50px; font-size:20px;">
-                                                <input type="text" maxlength="1" class="otp_input form-control text-center" style="width:45px; height:50px; font-size:20px;">
-                                                <input type="text" maxlength="1" class="otp_input form-control text-center" style="width:45px; height:50px; font-size:20px;">
-                                                <input type="text" maxlength="1" class="otp_input form-control text-center" style="width:45px; height:50px; font-size:20px;">
+                                                <input type="number" minlength="1" maxlength="1" class="otp_input form-control text-center" style="width:45px; height:50px; font-size:20px;">
+                                                <input type="number" minlength="1" maxlength="1" class="otp_input form-control text-center" style="width:45px; height:50px; font-size:20px;">
+                                                <input type="number" minlength="1" maxlength="1" class="otp_input form-control text-center" style="width:45px; height:50px; font-size:20px;">
+                                                <input type="number" minlength="1" maxlength="1" class="otp_input form-control text-center" style="width:45px; height:50px; font-size:20px;">
+                                                <input type="number" minlength="1" maxlength="1" class="otp_input form-control text-center" style="width:45px; height:50px; font-size:20px;">
+                                                <input type="number" minlength="1" maxlength="1" class="otp_input form-control text-center" style="width:45px; height:50px; font-size:20px;">
                                             </div>
 
                                             <!-- Verify OTP button -->
@@ -96,7 +96,30 @@
 
             // Auto focus for OTP inputs
             $(".otp_input").on('input', function() {
-                $(this).next('.otp_input').focus();
+                let $this = $(this);
+                let val = $this.val();
+
+                // Keep only the first digit (numeric only)
+                val = val.replace(/[^0-9]/g, ''); // Remove non-numeric
+                val = val.substring(0, 1);       // Keep only first character
+                $this.val(val);
+
+                // Highlight red if invalid (non-numeric)
+                if (val === '') {
+                    $this.css('border', '2px solid red');
+                } else {
+                    $this.css('border', '1px solid #ced4da');
+                    // Move to next input automatically if available
+                    $this.next('.otp_input').focus();
+                }
+            });
+
+            $(".otp_input").on('keydown', function(e) {
+                let $this = $(this);
+                if (e.key === "Backspace" && $this.val() === '') {
+                    // Move to previous input if exists
+                    $this.prev('.otp_input').focus().val('');
+                }
             });
 
             // Verify OTP
@@ -104,8 +127,18 @@
                 e.preventDefault();
 
                 let otp = '';
+                let invalid = false;
                 $(".otp_input").each(function() {
-                    otp += $(this).val();
+                    let val = $(this).val();
+
+                    // Check if value is a single digit number
+                    if (!/^\d$/.test(val)) {
+                        $(this).css('border', '2px solid red'); // Highlight invalid input
+                        invalid = true;
+                    } else {
+                        $(this).css('border', '1px solid #ced4da'); // Reset border
+                        otp += val;
+                    }
                 });
 
                 let userId = $("#user_id").val();

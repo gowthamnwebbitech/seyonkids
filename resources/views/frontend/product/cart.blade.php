@@ -34,7 +34,36 @@
     color: #333;
     margin-top: 5px;
 }
-
+.button-success {
+       background: green;
+    color: #ffffff;
+    border: none;
+    padding: 14px;
+    min-width: 100px;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    box-shadow: 0 4px 15px rgba(211, 47, 47, 0.3);
+    display: flex;
+    align-items: center;
+    /* gap: 8px; */
+    justify-content: center;
+    height: 42px;
+    margin-right: 10px
+}
+.btn-div{
+    display: flex;
+    align-content: center;
+    justify-content: start;
+    flex-wrap: wrap
+}
+.common-btn{
+    height: 42px;
+    width: max-content !important;
+    padding: 14px 25px
+}
 </style>
     <!-- Breadcrumb Section -->
     <section class="breadcrumb-section">
@@ -127,22 +156,26 @@
                             </div>
                             <hr>
                             <!-- Gift Options -->
-                            <div class="d-flex justify-content-between align-items-center mb-3">
-                                <div class="d-flex align-items-center gap-2">
+                            <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap">
+                                <div class="d-flex align-items-center gap-2 justify-content-between w-100">
                                     <label class="fw-semibold">Gift Wrap</label>
-                                    <label class="switch">
-                                        <input type="checkbox" id="test" @checked($cart_lists->first()->gift_wrap_id)>
-                                        <span class="slider round"></span>
-                                    </label>
-                                    <span>Yes</span>
+                                   <div>
+                                        <label class="switch">
+                                            <input type="checkbox" id="test" @checked($cart_lists->first()->gift_wrap_id)>
+                                            <span class="slider round"></span>
+                                        </label>
+                                        <span>Yes</span>
+                                   </div>
                                 </div>
-                                <div class="d-flex align-items-center gap-2">
+                                <div class="d-flex align-items-center gap-2 justify-content-between w-100">
                                     <label class="fw-semibold">Gift Message</label>
-                                    <label class="switch">
-                                        <input type="checkbox" id="test2" @checked($cart_lists->first()->gift_message)>
-                                        <span class="slider round"></span>
-                                    </label>
-                                    <span>Yes</span>
+                                    <div>
+                                        <label class="switch">
+                                            <input type="checkbox" id="test2" @checked($cart_lists->first()->gift_message)>
+                                            <span class="slider round"></span>
+                                        </label>
+                                        <span>Yes</span>
+                                    </div>
                                 </div>
                             </div>
                             @if(isset($cart_lists->first()->gift_wrap_id))
@@ -174,19 +207,26 @@
                                 </div>
                             </div>
                             <!-- Gift Message -->
-                            <div class="mb-3 gift-message">
-                                <div id="giftAlert" class="alert alert-success mt-2" style="display: none;" role="alert">
-                                    Gift message saved successfully!
+                            <div class="mb-3">
+                                <div class="gift-message">
+                                    <div id="giftAlert" class="alert alert-success mt-2" style="display: none;" role="alert">
+                                        Gift message saved successfully!
+                                    </div>
+                                    <p class="fw-semibold text-dark mb-2">Gift Message</p>
+                                    <textarea id="gift_message" class="form-control" rows="3" placeholder="Write your message...">{!! $cart_lists->first()->gift_message !!}</textarea>
+                                    <div id="messageAlert" class="alert alert-danger mt-2" style="display: none;" role="alert">
+                                        Message field is required!
+                                    </div>
                                 </div>
-                                <p class="fw-semibold text-dark mb-2">Gift Message</p>
-                                <textarea id="gift_message" class="form-control" rows="3" placeholder="Write your message...">{!! $cart->first()->gift_message !!}</textarea>
-                                <div id="messageAlert" class="alert alert-danger mt-2" style="display: none;" role="alert">
-                                    Message field is required!
+                                <div class="btn-div">
+                                     <div class="gift-message-save">
+                                        <button id="saveGiftMessage" class="button-success btn mt-2">Save</button> 
+                                     </div>
+
+                                    @if($cart_lists->first()->gift_wrap_id)
+                                        <button id="removeGiftMessage" class="common-btn btn-danger w-max mt-2">Remove</button>
+                                    @endif
                                 </div>
-                                <button id="saveGiftMessage" class="btn btn-success mt-2">Save</button>
-                                @if($cart_lists->first()->gift_wrap_id)
-                                    <button id="removeGiftMessage" class="btn btn-danger mt-2">Remove</button>
-                                @endif
                             </div>
 
                             <hr>
@@ -225,6 +265,7 @@
                     gift_wrap_id: giftWrapId
                 },
                 success: function(response) {
+                    location.reload();
                     if (response.status === 'success') {
                         $('.final-price').text('Rs.' + response.new_total);
                     }
@@ -298,6 +339,8 @@
     const cb2 = document.getElementById('test2');
     const options = document.querySelector('.gift-options');
     const message = document.querySelector('.gift-message');
+    const save = document.querySelector('.gift-message-save');
+    const remove = document.querySelector('.gift-message-remove');
 
     function updateOptions() {
         if (!options || !cb1) return;
@@ -307,6 +350,7 @@
     function updateMessage() {
         if (!message || !cb2) return;
         message.classList.toggle('d-none', !cb2.checked);
+        save.classList.toggle('d-none', !cb2.checked);
     }
 
     cb1?.addEventListener('change', updateOptions);

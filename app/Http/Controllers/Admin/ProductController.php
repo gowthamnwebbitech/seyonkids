@@ -532,6 +532,7 @@ class ProductController extends Controller
         if ($request->hasFile('file2')) {
             foreach ($request->file('file2') as $index => $image) {
                 $imageName = time() . '_' . $index . '.' . $image->getClientOriginalExtension();
+                // dd($imageName);
                 $image->move(public_path('uploads/product_images'), $imageName);
 
                 Upload::create([
