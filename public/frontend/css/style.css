@@ -557,7 +557,7 @@ p {
 
 .btn {
     display: block;
-    width: 50px;
+    width: max-content !important;
     height: 50px;
     background-color: #007bff;
     border: none;
@@ -3658,7 +3658,9 @@ input:checked+.slider:before {
         width: 19.666%;
     }
 }
-
+.w-max{
+    width: max-content !important;
+}
 @media (max-width: 768px) {
     .category-card {
         width: 92%;
@@ -3666,7 +3668,7 @@ input:checked+.slider:before {
     }
 
     .btn {
-        width: 40px;
+        width: max-content !important;
         height: 40px;
         font-size: 20px;
     }
@@ -4106,6 +4108,22 @@ svg.swiper-navigation-icon {
 .common-btn {
     background: linear-gradient(135deg, #d32f2f 0%, #b71c1c 100%);
     color: #fff;
+    border: none;
+    padding: 14px 50px;
+    border-radius: 8px;
+    font-size: 16px;
+    height: 42px !important;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    box-shadow: 0 4px 15px rgba(211, 47, 47, 0.3);
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+.button-success {
+    background: green;
+    color: #000000;
     border: none;
     padding: 14px 50px;
     border-radius: 8px;

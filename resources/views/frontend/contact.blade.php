@@ -25,10 +25,20 @@
                             </div>
                             <div class="text">
                                 <h6 class="reservation-text">Phone Number</h6>
-                                <p class="reservation-title"><a href="#">+91 78456 30620</a></p>
-                        <br>
-                                <h6 class="reservation-text">Whatsapp Number</h6>
-                                <p class="reservation-title"><a href="#">+91 78456 30620</a></p>
+                                <p class="reservation-title">
+                                    <a href="tel:+917845630620">
+                                        <i class="fas fa-phone-alt me-2"></i> +91 78456 30620
+                                    </a>
+                                </p>
+
+                                <br>
+
+                                <h6 class="reservation-text">WhatsApp Number</h6>
+                                <p class="reservation-title">
+                                    <a href="https://wa.me/917845630620" target="_blank">
+                                        <i class="fab fa-whatsapp me-2 text-success"></i> +91 78456 30620
+                                    </a>
+                                </p>
                             </div>
                         </div>
                         <div class="contact-detail">
@@ -37,7 +47,11 @@
                             </div>
                             <div class="text">
                                 <h6 class="reservation-text">Email Info</h6>
-                                <p class="reservation-title"><a href="#">seyontoys@gmail.com</a></p>
+                                <p class="reservation-title">
+                                    <a href="mailto:seyontoys@gmail.com">
+                                        <i class="fas fa-envelope me-2"></i> seyontoys@gmail.com
+                                    </a>
+                                </p>
                             </div>
                         </div>
                         <div class="contact-detail">
@@ -46,7 +60,16 @@
                             </div>
                             <div class="text">
                                 <h6 class="reservation-text">Address</h6>
-                                <p class="reservation-title"><a>26/7, 2ndFloor,<br> Nachimuthupudur 1STcross st,<br> Ellis Nagar, Dharapuram,<br> Tiruppur-638657</a></p>
+                                <p class="reservation-title">
+                                    <a href="https://maps.app.goo.gl/ZNcZqkquE2QRGk5H7"
+                                    target="_blank">
+                                        <i class="fas fa-map-marker-alt me-2"></i>
+                                        26/7, 2nd Floor,<br>
+                                        Nachimuthupudur 1st Cross St,<br>
+                                        Ellis Nagar, Dharapuram,<br>
+                                        Tiruppur - 638657
+                                    </a>
+                                </p>
                             </div>
                         </div>
                         <div class="contact-detail">

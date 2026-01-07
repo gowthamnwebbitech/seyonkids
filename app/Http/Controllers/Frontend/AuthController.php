@@ -335,7 +335,11 @@ class AuthController extends Controller
             $user->save();
 
             Auth::login($user);
-
+            if(session('auth_type') == 'login-with-otp'){
+                session()->forget('auth_type');
+                return response()->json(['status' => true,'message' => 'Verification code matched!',
+                'redirect' => route('user.dashboard')]);
+            }
             return response()->json([
                 'status' => true,
                 'message' => 'Verification code matched!',

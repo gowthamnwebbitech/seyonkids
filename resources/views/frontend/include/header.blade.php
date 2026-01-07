@@ -8,7 +8,7 @@
     <link rel="icon" type="image/png" href="{{ asset('frontend/fav-icon.png') }}">
     <title>Seyon</title>
     <!-- css -->
-    <link rel="stylesheet" href="{{ asset('frontend/css/style.css') }}" />
+    <link rel="stylesheet" href="{{ asset('frontend/css/style.css?=v22') }}" />
     <!-- bootstrap -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
     <link rel="stylesheet"

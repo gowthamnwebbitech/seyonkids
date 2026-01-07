@@ -450,9 +450,10 @@
                                     $subtotal -= $discount;
                                 }
 
-                                if (isset($cartItems->first()->gift_wrap_id)) {
-                                    $subtotal += $cartItems->first()->giftWrap->price;
-                                }
+                                // if (isset($cartItems->first()->gift_wrap_id)) {
+                                //     $subtotal += $cartItems->first()->giftWrap->price;
+                                // }
+                                
                                 $shipping_cost = $primary_address->shippingPrice?->shipping_cost ?? 90;
                                 // $subtotal += $shipping_cost;
                                 $sub_total = $subtotal;
@@ -538,6 +539,9 @@
                                 $discount = 0;
                             @endphp
                             @php
+                                // if (isset($cartItems->first()->gift_wrap_id)) {
+                                //     $subtotal += $cartItems->first()->giftWrap->price;
+                                // }
                                 $firstMilestone = $milestones->first(); 
                                 $isFirstMilestoneReached = $subtotal >= $firstMilestone->amount;
                             @endphp
@@ -549,8 +553,16 @@
                                 @else
                                     <input type="checkbox" name="gift_wrap">Apply Gift Wrap
                                 @endif
-                                    
                             </span> --}}
+                            <span class="badge bg-success w-100">
+                                @if($cartItems->first()->gift_wrap_id)
+                                    <input type="checkbox" name="gift_wrap" 
+                                    @if($cartItems->first()->gift_wrap_id) checked disabled 
+                                    @endif> Applied Gift Wrap
+                                {{-- @else
+                                    <input type="checkbox" name="gift_wrap">Apply Gift Wrap --}}
+                                @endif
+                            </span>
 
                             <div class="coupon-section">
                                 <div class="coupon-controls d-flex align-items-center gap-2">
@@ -626,14 +638,14 @@
                                     @endif
                                 </div>
 
-                                @if (isset($cartItem->first()->gift_wrap_id))
+                                @if (isset($cartItems->first()->gift_wrap_id))
                                     <div class="d-flex justify-content-between align-items-center mb-2">
                                         <h6 class="mb-0">Gift Wrap Cost</h6>
-                                        <span class="total-amount">₹{{ $cartItem->first()->giftWrap->price }}</span>
+                                        <span class="total-amount">₹{{ $cartItems->first()->giftWrap->price }}</span>
                                     </div>
 
                                     @php
-                                        $subtotal = $subtotal + $cartItem->first()->giftWrap->price;
+                                        $subtotal = $subtotal + $cartItems->first()->giftWrap->price;
                                     @endphp
                                 @endif
                                 

@@ -160,10 +160,12 @@
                                                     @if ($review)
                                                         <a class="common-btn">Review submitted</a>
                                                     @else
-                                                        <a data-bs-toggle="modal" data-bs-target="#exampleModal"
-                                                            data-order-id="{{ $item->id }}"
-                                                            class="common-btn write-review-btn"><i
-                                                                class="bi bi-pencil me-2"></i>Write review</a>
+                                                        @if($item->order->shipping_status == 4)
+                                                            <a data-bs-toggle="modal" data-bs-target="#exampleModal"
+                                                                data-order-id="{{ $item->id }}"
+                                                                class="common-btn write-review-btn"><i
+                                                                    class="bi bi-pencil me-2"></i>Write review</a>
+                                                        @endif
                                                     @endif
                                                 </td>
 
@@ -630,9 +632,20 @@
                 min-width: 600px;
             }
         }
+        .review-textarea {
+            resize: none;
+            border-radius: 10px;
+            padding: 12px;
+            font-size: 14px;
+            border: 1px solid #ced4da;
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
+
+        .review-textarea:focus {
+            border-color: #28a745;
+            box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.25);
+        }
     </style>
-
-
 
         <!-- Modal -->
         <div class="modal fade" id="exampleModal" tabindex="-1" aria-hidden="true">
@@ -645,7 +658,7 @@
                     <div class="modal-body">
                         <form id="review-form" action="{{ route('add.review') }}" method="post">
                             @csrf
-                            <input type="hidden" name="order_id" id="order-id">
+                            <input type="hidden" name="order_id" id="order-id" value="{{ $orders->id }}">
                             <input type="hidden" name="rate_value" id="rate-value">
 
                             <div class="text-center mb-3">
@@ -655,7 +668,15 @@
                                 <i class="far fa-star star" data-value="4"></i>
                                 <i class="far fa-star star" data-value="5"></i>
                             </div>
-
+                            <label for="comment" class="form-label fw-semibold">Your Comment</label>
+                            <textarea
+                                id="comment"
+                                name="comment"
+                                class="form-control review-textarea"
+                                rows="4"
+                                placeholder="Write your experience here..."
+                            ></textarea>
+                            <small class="text-muted">Minimum 10 characters</small>
                             <div class="text-center">
                                 <button type="submit" class="btn-success" id="submit-review" disabled>Add Review</button>
                             </div>
@@ -670,40 +691,69 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 
 <script>
-    $(document).ready(function(){
+    $(document).ready(function () {
+
+        function toggleSubmitButton() {
+            let rating  = $('#rate-value').val();
+            let comment = $('#comment').val().trim();
+
+            if (rating && comment.length >= 10) {
+                $('#submit-review').prop('disabled', false);
+            } else {
+                $('#submit-review').prop('disabled', true);
+            }
+        }
+
         // Reset modal on open
-        $('.write-review-btn').on('click', function(){
+        $('.write-review-btn').on('click', function () {
             let orderId = $(this).data('order-id');
+
             $('#order-id').val(orderId);
-            $('#rate-value').val(''); // reset previous selection
-            $('.star').removeClass('fas').addClass('far'); // reset stars
-            $('#submit-review').prop('disabled', true); // disable submit
+            $('#rate-value').val('');
+            $('#comment').val('');
+
+            $('.star').removeClass('fas').addClass('far');
+            $('#submit-review').prop('disabled', true);
         });
 
         // Hover effect
-        $('.star').on('mouseover', function(){
+        $('.star').on('mouseenter', function () {
             let onStar = parseInt($(this).data('value'));
-            $('.star').each(function(index){
-                $(this).toggleClass('fas', index < onStar).toggleClass('far', index >= onStar);
+
+            $('.star').each(function (index) {
+                $(this)
+                    .toggleClass('fas', index < onStar)
+                    .toggleClass('far', index >= onStar);
             });
-        }).on('mouseout', function(){
+        }).on('mouseleave', function () {
             let rating = parseInt($('#rate-value').val()) || 0;
-            $('.star').each(function(index){
-                $(this).toggleClass('fas', index < rating).toggleClass('far', index >= rating);
+
+            $('.star').each(function (index) {
+                $(this)
+                    .toggleClass('fas', index < rating)
+                    .toggleClass('far', index >= rating);
             });
         });
 
         // Click to select rating
-        $('.star').on('click', function(){
+        $('.star').on('click', function () {
             let onStar = parseInt($(this).data('value'));
             $('#rate-value').val(onStar);
-            $('.star').each(function(index){
-                $(this).toggleClass('fas', index < onStar).toggleClass('far', index >= onStar);
+
+            $('.star').each(function (index) {
+                $(this)
+                    .toggleClass('fas', index < onStar)
+                    .toggleClass('far', index >= onStar);
             });
 
-            // Enable submit after selecting a star
-            $('#submit-review').prop('disabled', false);
+            toggleSubmitButton();
         });
+
+        // Comment input validation
+        $('#comment').on('input', function () {
+            toggleSubmitButton();
+        });
+
     });
 </script>
 

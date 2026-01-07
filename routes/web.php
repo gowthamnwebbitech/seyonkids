@@ -38,10 +38,12 @@ use App\Models\Setting;
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
 Route::get('login-with-otp', function () {
+    session()->put('auth_type', 'login-with-otp');
     return view('frontend.auth.login_otp');
 })->name('login.otp');
 
 Route::get('forgot-password-step1', function () {
+    session()->forget('auth_type');
     return view('frontend.auth.forgot_password_step1');
 })->name('forgot_password_step1');
 
