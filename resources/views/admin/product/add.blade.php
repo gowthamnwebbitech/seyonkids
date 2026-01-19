@@ -68,7 +68,7 @@
                                     </div>
                                     <div class="mb-3 col-md-4">
                                         <label class="form-label">Category</label>
-                                        <select class="form-control" id="category" name="category_id" required>
+                                        <select class="form-control" id="category" name="category_id">
                                             <option data-display="Select" value="">Please select</option>
                                             @php $categories = App\Models\ProductCategory::get(); @endphp
                                             @foreach ($categories as $category)
@@ -83,7 +83,7 @@
                                     </div>
                                     <div class="mb-3 col-md-4">
                                         <label class="form-label">SubCategory</label>
-                                        <select class="form-control" id="subcategory" name="subcategory" required>
+                                        <select class="form-control" id="subcategory" name="subcategory">
                                             <option value="" data-display="Select">Please select</option>
                                             {{-- <option value="{{ $subcategory->id }}" data-display="Select">{{ $subcategory->name }}</option> --}}
                                         </select>
@@ -93,7 +93,7 @@
                                     </div>
                                     <div class="mb-3 col-md-4">
                                         <label class="form-label">SubMenu</label>
-                                        <select class="form-control" id="submenu" name="submenu" required>
+                                        <select class="form-control" id="submenu" name="submenu">
                                             <option value="" data-display="Select">Please select</option>
                                         </select>
                                         @error('submenu')
@@ -167,8 +167,8 @@
                                 <div class="row @if (old('pages') == 'book') @else d-none @endif" id="pages_row">
                                     <div class="mb-3 col-md-6">
                                         <label class="form-label">No of Pages</label>
-                                        <input type="number" name="pages" class="form-control"
-                                            placeholder="Ex: 120 Pages" value="{{ old('pages') }}" required>
+                                        <input type="number" name="pages" id="pages" class="form-control"
+                                            placeholder="Ex: 120 Pages" value="{{ old('pages') }}">
                                         @error('pages')
                                             <div class="text-danger">{{ $message }}</div>
                                         @enderror
@@ -537,12 +537,16 @@
         $("[name='offer_price'], [name='actual_price']").on("input", calculateOfferPercentage);
 
 
-        $('#product_type').change(function() {
+        $('#product_type').change(function () {
             var selectedType = $(this).val();
+        
             if (selectedType === 'book') {
                 $('#pages_row').removeClass('d-none');
+                $('#pages').attr('required', true);   // add required
             } else {
                 $('#pages_row').addClass('d-none');
+                $('#pages').removeAttr('required');   // remove required
+                $('#pages').val('');                  // optional: clear value
             }
         });
     });

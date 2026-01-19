@@ -481,8 +481,8 @@
                                     @else
                                         @auth
                                             <a href="javascript:void(0)" class="card-btun btn-sm action wishlist-btn"
-                                                data-id="{{ $new_arrival->id }}"
-                                                data-url="{{ route('addto.wishlist', $new_arrival->id) }}"
+                                                data-id="{{ $seller->id }}"
+                                                data-url="{{ route('addto.wishlist', $seller->id) }}"
                                                 data-login="{{ route('user.login') }}" title="Add To Wishlist">
                                                 <i class="bi bi-heart"></i>
                                             </a>

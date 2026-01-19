@@ -176,17 +176,21 @@
                             </div>
                         </div>
                     </div>
+                    @php
+                        $grandTotal = 0;
+                    @endphp
+                    
+                    @foreach ($orders_details as $key => $item)
+                        @php
+                            $grandTotal += $item->product->offer_price * $item->quantity;
+                        @endphp
+                    @endforeach
                     <div class="col-lg-4">
                         <div class="total-box">
                             <h1 class="total-title">Cart Total</h1>
 
                             <dl class="row mt-4 gy-2">
-                                <dd class="col-sm-6">
-                                    <p>Subtotal</p>
-                                </dd>
-                                <dd class="col-sm-6">
-                                    <p class="text-end">₹{{ $orders->total_amount }}</p>
-                                </dd>
+                                
                                 {{-- <dd class="col-sm-6">
                                     <p>GST Charge(+)</p>
                                 </dd>
@@ -194,10 +198,30 @@
                                     <p class="text-end">₹{{ $orders->gst }}</p>
                                 </dd> --}}
                                 <dd class="col-sm-6">
+                                    <p>Total</p>
+                                </dd>
+                                <dd class="col-sm-6">
+                                    <p class="text-end">₹{{ $grandTotal }}</p>
+                                </dd>
+                                
+                                <dd class="col-sm-6">
+                                    <p>Shipping Cost</p>
+                                </dd>
+                                <dd class="col-sm-6">
+                                    <p class="text-end">₹{{ $orders->shipping_cost ?? 0 }}</p>
+                                </dd>
+                                
+                                <dd class="col-sm-6">
                                     <p>Coupen Discount(-)</p>
                                 </dd>
                                 <dd class="col-sm-6">
                                     <p class="text-end">₹ {{ $orders->coupon_discount }}</p>
+                                </dd>
+                                <dd class="col-sm-6">
+                                    <p>Subtotal</p>
+                                </dd>
+                                <dd class="col-sm-6">
+                                    <p class="text-end">₹{{ $orders->total_amount}}</p>
                                 </dd>
                             </dl>
                             <div class="final-cost">

@@ -50,51 +50,65 @@
                             <form method="POST" action="{{ route('shop.by.store') }}" enctype="multipart/form-data">
                                 @csrf
                                 <div class="row">
-                                    <div class="mb-3 col-md-6">
+                                    <div class="mb-3 col-md-4">
                                         <label class="form-label">Age Title</label>
-                                        <input type="text" name="title" class="form-control" placeholder="Enter Title"
-                                            value="{{ old('title') }}" pattern="[A-Za-z0-9 _-]+"
-                                            title="Only letters, numbers, spaces, hyphen (-) and underscore (_) are allowed"
-                                            oninput="this.value=this.value.replace(/[^A-Za-z0-9 _-]/g,'')">
-                                        @error('title')
-                                            <div class="text-danger">{{ $message }}</div>
-                                        @enderror
+                                        <input type="text"
+                                            name="title"
+                                            class="form-control"
+                                            value="{{ old('title', $shop_by_age->title ?? '') }}"
+                                            placeholder="Enter Title"
+                                            pattern="[A-Za-z0-9 _-]+"
+                                            required>
+                                        @error('title') <div class="text-danger">{{ $message }}</div> @enderror
                                     </div>
-                                    <div class="mb-3 col-md-6">
-                                        <label class="form-label">Image
-                                            <span class="text-muted">
-                                                (Recommended size: 1600 × 2400 px, Max file size: 1 MB)
-                                            </span>
-                                        </label>
-                                        <input type="file" name="image" class="form-control"
-                                            value="{{ old('image') }}">
-                                        @error('image')
-                                            <div class="text-danger">{{ $message }}</div>
-                                        @enderror
-                                    </div>
-                                    <div class="row align-items-center">
-                                        <div class="mb-3 col-md-6">
-                                            <label for="url" class="form-label">Url</label>
-                                            <input type="url" class="form-control" id="url" name="url"
-                                                placeholder="https://example.com" pattern="https?://.+"
-                                                title="Enter a valid URL starting with http:// or https://" required>
-                                        </div>
 
-                                        <div class="mb-3 col-md-6">
-                                            <label class="form-label">Status</label><br>
-                                            <div class="form-check form-check-inline">
-                                                <input class="form-check-input" type="radio" name="status" id="active"
-                                                    value="1" checked>
-                                                <label class="form-check-label" for="active">Active</label>
-                                            </div>
-                                            <div class="form-check form-check-inline">
-                                                <input class="form-check-input" type="radio" name="status" id="inactive"
-                                                    value="0">
-                                                <label class="form-check-label" for="inactive">Inactive</label>
-                                            </div>
-                                        </div>
+                                    <div class="mb-3 col-md-4">
+                                        <label class="form-label">Image</label>
+                                        <input type="file" name="image" class="form-control">
+                                        @error('image') <div class="text-danger">{{ $message }}</div> @enderror
+                                    </div>
+
+                                    <div class="mb-3 col-md-4">
+                                        <label class="form-label">Priority</label>
+                                        <input type="number"
+                                            name="priority"
+                                            min="0"
+                                            class="form-control"
+                                            value="{{ old('priority', $shop_by_age->priority ?? 0) }}"
+                                            required>
+                                        @error('priority') <div class="text-danger">{{ $message }}</div> @enderror
                                     </div>
                                 </div>
+
+                                <div class="row">
+                                    <div class="mb-3 col-md-6">
+                                        <label class="form-label">URL</label>
+                                        <input type="url"
+                                            name="url"
+                                            class="form-control"
+                                            value="{{ old('url', $shop_by_age->url ?? '') }}"
+                                            placeholder="https://example.com"
+                                            required>
+                                        @error('url') <div class="text-danger">{{ $message }}</div> @enderror
+                                    </div>
+
+                                    <div class="mb-3 col-md-6">
+                                        <label class="form-label">Status</label><br>
+
+                                        <label class="me-3">
+                                            <input type="radio" name="status" value="1"
+                                                {{ old('status', $shop_by_age->status ?? 1) == 1 ? 'checked' : '' }}>
+                                            Active
+                                        </label>
+
+                                        <label>
+                                            <input type="radio" name="status" value="0"
+                                                {{ old('status', $shop_by_age->status ?? 1) == 0 ? 'checked' : '' }}>
+                                            Inactive
+                                        </label>
+                                    </div>
+                                </div>
+
 
                                 <button class="btn btn-primary" type="submit">Add Product</button>
                             </form>

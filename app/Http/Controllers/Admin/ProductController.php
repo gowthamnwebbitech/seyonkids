@@ -217,7 +217,7 @@ class ProductController extends Controller
             'shop_by_age_id'  => 'required|exists:shop_by_ages,id',
             'shop_by_price'   => 'required|exists:shop_by_prices,id',
             'category_id'     => 'required|exists:product_categories,id',
-            'submenu'         => 'required|exists:product_submenus,id',
+            // 'submenu'         => 'required|exists:product_submenus,id',
             'product_name'    => 'required|string|max:255',
             'quantity'        => 'required|integer|min:1',
             'actual_price'    => 'required|numeric|min:0',
@@ -436,8 +436,8 @@ class ProductController extends Controller
             'product_type' => 'required|in:book,toys',
 
             'category_id'  => 'required|exists:product_categories,id',
-            'subcategory'  => 'required|exists:product_sub_categories,id',
-            'submenu'      => 'required|exists:product_submenus,id',
+            // 'subcategory'  => 'required|exists:product_sub_categories,id',
+            // 'submenu'      => 'required|exists:product_submenus,id',
 
             'shop_by_age_id'   => 'required|array|min:1',
             'shop_by_age_id.*' => 'exists:shop_by_ages,id',

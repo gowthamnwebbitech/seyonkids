@@ -34,7 +34,7 @@ class HomeController extends Controller
 {
     public function index(){
         $categories = ProductCategory::where('status', 1)->get();
-        $shop_by_age = ShopByAge::where('status', 1)->get();
+        $shop_by_age = ShopByAge::where('status', 1)->orderBy('priority', 'asc')->get();
         $shop_by_prices = ShopByPrice::where('status', 1)->get();
         $shop_by_reels = ShopByReels::where('status', 1)->get();
         $call_to_actions = CallToAction::where('status', 1)->get()->keyBy('name');
