@@ -13,6 +13,7 @@ class Cart extends Model
         'product_id',
         'quantity',
         'price',
+        'color_id',
         'gift_message'
     ];
     public function user()
@@ -26,5 +27,10 @@ class Cart extends Model
 
     public function giftWrap(){
         return $this->belongsTo(GiftWrap::class,'gift_wrap_id','id');
+    }
+
+    public function colorData()
+    {
+        return $this->belongsTo(Color::class, 'color_id');
     }
 }

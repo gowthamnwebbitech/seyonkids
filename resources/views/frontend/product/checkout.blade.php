@@ -374,58 +374,58 @@
                                 </div>
                             @enderror
 
-                            <h3 class="mb-4 fw-bold">Billing details</h3>
-                            <div class="row mb-3">
-                                <div class="col-md-6">
-                                    <label for="courierPreference" class="form-label">Courier Preference</label>
-                                    <div class="d-flex">
-                                        <div class="courier-option ">
-                                            <input type="radio" id="stCourier" name="courier_name" value="ST Courier"
-                                                class="courier-radio" @checked(old('courier_name') == 'ST Courier')>
-                                            <label for="stCourier">
-                                                <img src="{{ asset('frontend/stc.webp') }}" alt="ST Courier"
-                                                    class="courier-img">
-                                            </label>
-                                        </div>
-                                        <div class="courier-option">
-                                            <input type="radio" id="edcCourier" name="courier_name" value="DTDC"
-                                                class="courier-radio" @checked(old('courier_name') == 'DTDC')>
-                                            <label for="edcCourier">
-                                                <img src="{{ asset('frontend/dtdc.webp') }}" alt="DTDC"
-                                                    class="courier-img">
-                                            </label>
-                                        </div>
-                                        <div class="courier-option">
-                                            <input type="radio" id="professionalCourier" name="courier_name"
-                                                value="Professional Courier" class="courier-radio"
-                                                @checked(old('courier_name') == 'Professional Courier')>
-                                            <label for="professionalCourier">
-                                                <img src="{{ asset('frontend/proff.webp') }}" alt="Professional Courier"
-                                                    class="courier-img">
-                                            </label>
-                                        </div>
+                        </div>
+                        <h3 class="mb-4 fw-bold">Billing details</h3>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="courierPreference" class="form-label">Courier Preference</label>
+                                <div class="d-flex">
+                                    <div class="courier-option ">
+                                        <input type="radio" id="stCourier" name="courier_name" value="ST Courier"
+                                            class="courier-radio" @checked(old('courier_name') == 'ST Courier')>
+                                        <label for="stCourier">
+                                            <img src="{{ asset('frontend/stc.webp') }}" alt="ST Courier"
+                                                class="courier-img">
+                                        </label>
                                     </div>
-                                    <div class="d-flex mt-2">
-                                        <div class="courier-option ">
-                                            <input type="radio" id="Delhivery" name="courier_name" value="Delhivery"
-                                                class="courier-radio" @checked(old('courier_name') == 'Delhivery')>
-                                            <label for="Delhivery">
-                                                <img src="{{ asset('frontend/delhivery.png') }}" alt="Delhivery"
-                                                    class="courier-img">
-                                            </label>
-                                        </div>
-                                        <div class="courier-option">
-                                            <input type="radio" id="indiaPost" name="courier_name" value="India Post"
-                                                class="courier-radio" @checked(old('courier_name') == 'India Post')>
-                                            <label for="indiaPost">
-                                                <img src="{{ asset('frontend/india_post.png') }}" alt="India Post"
-                                                    class="courier-img">
-                                            </label>
-                                        </div>
-
+                                    <div class="courier-option">
+                                        <input type="radio" id="edcCourier" name="courier_name" value="DTDC"
+                                            class="courier-radio" @checked(old('courier_name') == 'DTDC')>
+                                        <label for="edcCourier">
+                                            <img src="{{ asset('frontend/dtdc.webp') }}" alt="DTDC"
+                                                class="courier-img">
+                                        </label>
                                     </div>
-                                    <div id="courier_name-error" class="text-danger courier-error"></div>
+                                    <div class="courier-option">
+                                        <input type="radio" id="professionalCourier" name="courier_name"
+                                            value="Professional Courier" class="courier-radio"
+                                            @checked(old('courier_name') == 'Professional Courier')>
+                                        <label for="professionalCourier">
+                                            <img src="{{ asset('frontend/proff.webp') }}" alt="Professional Courier"
+                                                class="courier-img">
+                                        </label>
+                                    </div>
                                 </div>
+                                <div class="d-flex mt-2">
+                                    <div class="courier-option ">
+                                        <input type="radio" id="Delhivery" name="courier_name" value="Delhivery"
+                                            class="courier-radio" @checked(old('courier_name') == 'Delhivery')>
+                                        <label for="Delhivery">
+                                            <img src="{{ asset('frontend/delhivery.png') }}" alt="Delhivery"
+                                                class="courier-img">
+                                        </label>
+                                    </div>
+                                    <div class="courier-option">
+                                        <input type="radio" id="indiaPost" name="courier_name" value="India Post"
+                                            class="courier-radio" @checked(old('courier_name') == 'India Post')>
+                                        <label for="indiaPost">
+                                            <img src="{{ asset('frontend/india_post.png') }}" alt="India Post"
+                                                class="courier-img">
+                                        </label>
+                                    </div>
+
+                                </div>
+                                <div id="courier_name-error" class="text-danger courier-error"></div>
                             </div>
                         </div>
                     </div>
@@ -520,6 +520,25 @@
 
                                             <div class="product-details flex-grow-1 ms-3">
                                                 <h6 class="mb-1">{{ $cartItem->product->product_name }}</h6>
+                                            <style>
+                                                .color_picker label {
+                                                    border: 1px solid #b5b5b5;
+                                                    border-radius: 10px;
+                                                    display: inline-block;
+                                                    width: 25px;
+                                                    height: 25px;
+                                                    margin-right: 4px;
+                                                }
+                                            </style>
+                                            <div class="color_picker">
+                                                @if($cartItem->color_id && $cartItem->colorData)
+                                                    @if($cartItem->colorData)
+                                                        <label for="color" title="{{ $cartItem->colorData->color }}" style="background-color: {{ $cartItem->colorData->color_code }}">
+                                                            <span style="background-color: {{ $cartItem->colorData->color_code }}"></span>
+                                                        </label>
+                                                    @endif
+                                                @endif
+                                            </div>
                                                 <div class="text-muted small">Price:
                                                     ₹{{ number_format($cartItem->product->offer_price, 2) }}</div>
                                             </div>

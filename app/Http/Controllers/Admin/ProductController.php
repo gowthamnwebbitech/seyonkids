@@ -244,6 +244,7 @@ class ProductController extends Controller
         $product->description  = $request->description;
         $product->discount     = $request->discount;
         $product->offer_price  = $request->offer_price;
+        $product->is_color     = $request->is_color;
         // $product->gst          = $request->gst;
         $product->sku          = $request->pages;
         if ($request->product_type == "book") {
@@ -268,9 +269,14 @@ class ProductController extends Controller
 
         $product->save();
         $product->shopByAges()->sync($request->shop_by_age_id);
-        if ($request->has('colors')) {
-            $product->colors()->sync($request->colors); // Save selected colors
+
+        // Sync colors only if is_color = 1
+        if ($request->is_color == 1 && $request->has('colors')) {
+            $product->colors()->sync($request->colors);
+        } else {
+            $product->colors()->sync([]); // remove previously attached colors if any
         }
+
         // Gallery images
         if ($request->hasFile('file2')) {
             foreach ($request->file('file2') as $index => $image) {
@@ -511,6 +517,7 @@ class ProductController extends Controller
         $product->description  = $request->description;
         $product->sku          = $request->sku;
         $product->status       = $request->status;
+        $product->is_color     = $request->is_color;
 
         if ($request->product_type === 'book') {
             $product->no_of_pages = $request->pages;
@@ -532,6 +539,11 @@ class ProductController extends Controller
 
         // Sync shop by ages
         $product->shopByAges()->sync($request->shop_by_age_id);
+        if ($request->is_color == 1 && $request->has('colors')) {
+            $product->colors()->sync($request->colors);
+        } else {
+            $product->colors()->sync([]);
+        }
 
         // Gallery images
         if ($request->hasFile('file2')) {

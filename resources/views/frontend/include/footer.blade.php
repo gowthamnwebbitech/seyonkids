@@ -4,9 +4,7 @@
             <!-- About Us -->
             <div class="col-md-4 footer-logo wit">
                 <img src="{{ asset('frontend/img/footer-logo.png') }}" alt="Logo">
-                <p class="text-white">At Cats and Cuddles, we’re more than just a small business - we’re a family. And we
-                    want you to be a
-                    part of it!</p>
+                <p class="text-white">At Seyon, we deliver best quality of products for kids that combine learning and play.</p>
             </div>
 
 

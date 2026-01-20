@@ -395,9 +395,9 @@
                                 <div class="card-body p-2">
                                     <p class="card-title small text-truncate-2 mb-1">{{ $new_arrival->product_name }}</p>
                                     <div class="price small">
-                                        <span class="text-danger fw-semibold">{{ $new_arrival->offer_price }}</span>
+                                        <span class="text-danger fw-semibold">₹{{ $new_arrival->offer_price }}</span>
                                         <span
-                                            class="text-muted text-decoration-line-through">{{ $new_arrival->orginal_rate }}</span>
+                                            class="text-muted text-decoration-line-through">₹{{ $new_arrival->orginal_rate }}</span>
                                     </div>
                                 </div>
 
@@ -506,9 +506,9 @@
                             <div class="card-body">
                                 <p class="card-title small text-truncate-2 mb-1">{{ $seller->product_name }}</p>
                                 <div class="price small">
-                                    <span class="text-danger fw-semibold">{{ $seller->offer_price }}</span>
+                                    <span class="text-danger fw-semibold">₹{{ $seller->offer_price }}</span>
                                     <span
-                                        class="text-muted text-decoration-line-through">{{ $seller->orginal_rate }}</span>
+                                        class="text-muted text-decoration-line-through">₹{{ $seller->orginal_rate }}</span>
                                 </div>
                             </div>
                         </div>

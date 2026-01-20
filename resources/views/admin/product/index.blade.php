@@ -98,8 +98,9 @@
                                 {{ $item->product_name }}
                             </td>
                             <td>
-                                <b>Actual Price:</b> {{ $item->offer_price }} <br>
-                                <b>Discount:</b> {{ $item->discount ?? '' }}
+                                <b>Actual Price:</b> ₹{{ $item->orginal_rate }} <br>
+                                <b>Offer Price:</b> ₹{{ $item->offer_price }} <br>
+                                <b>Discount:</b> {{ $item->discount ?? '' }}%
                             </td>
                             <td>{{ $item->quantity }}</td>
                             <td>

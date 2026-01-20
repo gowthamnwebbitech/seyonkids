@@ -105,17 +105,37 @@
                                 <div class="cart-item">
                                     <div class="row align-items-center w-100">
                                         <div class="col-1">
-                                            <button class="remove-btn" data-url="{{ route('cart.remove') }}" onclick="confirmRemove(this, {{$cart->id}})">×</button>
+                                            <button class="remove-btn" data-url="{{ route('cart.remove') }}" onclick="removeCart( {{$cart->id}})">×</button>
                                         </div>
+                                        <style>
+                                            .color_picker label {
+                                                border: 1px solid #b5b5b5;
+                                                border-radius: 10px;
+                                                display: inline-block;
+                                                width: 25px;
+                                                height: 25px;
+                                                margin-right: 4px;
+                                            }
+                                        </style>
                                         <div class="col-4">
                                             <div class="product-info">
                                                 <img src="{{ asset($cart->product->product_img) }}"
                                                     alt="Product" class="product-image">
                                                 <h6 class="product-name">{{ $cart->product->product_name }}</h6>
+                                                
+                                                <div class="color_picker ms-2">
+                                                    @if($cart->color_id && $cart->colorData)
+                                                        @if($cart->colorData)
+                                                            <label for="color" title="{{ $cart->colorData->color }}" style="background-color: {{ $cart->colorData->color_code }}">
+                                                                <span style="background-color: {{ $cart->colorData->color_code }}"></span>
+                                                            </label>
+                                                        @endif
+                                                    @endif
+                                                </div>
                                             </div>
                                         </div>
                                         <div class="col-2">
-                                            <span class="price-text">{{ $cart->product->offer_price ?? ''}}</span>
+                                            <span class="price-text">₹ {{ $cart->product->offer_price ?? ''}}</span>
                                         </div>
                                         <div class="col-3">
                                             <div class="quantity-control">

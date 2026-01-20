@@ -145,7 +145,27 @@
                                         <td> {{ $key+1 }} </td>
                                         @php $product_img = App\Models\Product::where('id',$item->product_id)->first(); @endphp
                                         <td> <img src="{{ asset($product_img->product_img) }}" style="height:100px;width:100px;" alt=""> </td> 
-                                        <td> {{ $item->productname }} </td>
+                                        <td> {{ $item->productname }} <br>
+                                            <style>
+                                                .color_picker label {
+                                                    border: 1px solid #b5b5b5;
+                                                    border-radius: 10px;
+                                                    display: inline-block;
+                                                    width: 25px;
+                                                    height: 25px;
+                                                    margin-right: 4px;
+                                                }
+                                            </style>
+                                            <div class="color_picker ms-2">
+                                                @if($item->color_id && $item->colorData)
+                                                    @if($item->colorData)
+                                                        <label for="color" title="{{ $item->colorData->color }}" style="background-color: {{ $item->colorData->color_code }}">
+                                                            <span style="background-color: {{ $item->colorData->color_code }}"></span>
+                                                        </label>
+                                                    @endif
+                                                @endif
+                                            </div>
+                                        </td>
                                         <td> {{ $item->offer_price }} </td> 
                                         <td> {{ $item->quantity }} </td> 
                                         <td> {{ $item->offer_price*$item->quantity }} </td> 

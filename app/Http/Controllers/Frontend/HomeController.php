@@ -210,7 +210,7 @@ class HomeController extends Controller
     public function productDetails($id)
     {   
         $productImages  = Upload::where('product_id',$id)->get();
-        $productDetails = Product::where('id', $id)->first();
+        $productDetails = Product::with('colors')->where('id', $id)->first();
         $productImages  = Upload::where('product_id', $id)->get();
         $related_products = Product::where('category_id', $productDetails->category_id)->get();   
         return view('frontend.product.details',compact('productDetails','productImages','related_products'));
@@ -657,28 +657,53 @@ class HomeController extends Controller
 
     public function buyNow(Request $request)
     {
-        $productId = $request->input('product_id');
-        $product = Product::find($productId);
+        $request->validate([
+            'product_id' => 'required|exists:products,id',
+            'quantity'   => 'nullable|integer|min:1',
+            'color'      => 'nullable|exists:colors,id',
+        ]);
 
-        if (!$product) {
-            return response()->json(['status' => 'error', 'message' => 'Product not found']);
+        $product = Product::findOrFail($request->product_id);
+
+        // ✅ If product has colors, color is mandatory
+        if ($product->is_color == 1 && !$request->filled('color')) {
+            return back()->with('error', 'Please select a color');
         }
 
+        // ✅ Validate color belongs to this product
+        if ($request->filled('color')) {
+            $validColor = $product->colors()
+                ->where('colors.id', $request->color)
+                ->exists();
+
+            if (!$validColor) {
+                return back()->with('error', 'Invalid color selected');
+            }
+        }
+
+        $quantity = $request->input('quantity', 1);
+        $colorId  = $request->input('color'); // NULL if not selected
+
+        // ✅ Cart item must be unique per product + color
         $cartItem = Cart::where('user_id', Auth::id())
-                        ->where('product_id', $product->id)
-                        ->first();
+            ->where('product_id', $product->id)
+            ->where('color_id', $colorId)
+            ->first();
+
         if ($cartItem) {
-            $cartItem->quantity = $request->input('quantity', 1);
+            $cartItem->quantity = $quantity;
             $cartItem->save();
         } else {
             Cart::create([
                 'user_id'    => Auth::id(),
                 'product_id' => $product->id,
-                'quantity'   => $request->input('quantity', 1),
-                'price' => $product->offer_price,
+                'color_id'   => $colorId,
+                'quantity'   => $quantity,
+                'price'      => $product->offer_price,
             ]);
         }
 
         return redirect()->route('product.proceed_to_checkout');
     }
+
 }

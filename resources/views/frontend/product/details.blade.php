@@ -4,6 +4,7 @@
         .wishlist-section .btn {
             transition: all 0.25s ease-in-out;
         }
+
         .wishlist-section .btn:hover {
             transform: translateY(-1px);
             box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
@@ -48,7 +49,7 @@
                         <!-- Rating -->
                         @php
                             $averageRating = round($productDetails->reviews()->avg('star_count'), 1);
-                            $ratingCount   = $productDetails->reviews()->count();
+                            $ratingCount = $productDetails->reviews()->count();
                         @endphp
 
                         <div class="rating-section mb-3">
@@ -64,7 +65,8 @@
                                 @endfor
                             </span>
                             <span class="rating-text">
-                                {{ $averageRating ?? '0' }} Star Rating ({{ $ratingCount }} User Feedback{{ $ratingCount > 1 ? 's' : '' }})
+                                {{ $averageRating ?? '0' }} Star Rating ({{ $ratingCount }} User
+                                Feedback{{ $ratingCount > 1 ? 's' : '' }})
                             </span>
                         </div>
 
@@ -75,13 +77,13 @@
                         <div class="product-meta">
                             <div class="col-5">
                                 <div class="meta-item">
-                                    @if($productDetails->sku)
+                                    @if ($productDetails->sku)
                                         <span class="meta-label">SKU:</span>
                                         <span class="meta-value">{{ $productDetails->sku }}</span>
                                     @endif
                                 </div>
                                 <div class="meta-item">
-                                    @if($productDetails->no_of_pages)
+                                    @if ($productDetails->no_of_pages)
                                         <span class="meta-label">No of Pages:</span>
                                         <span class="meta-value">{{ $productDetails->no_of_pages }} pages</span>
                                     @endif
@@ -102,7 +104,8 @@
                                     @if ($productDetails->quantity >= 4)
                                         <span class="meta-value text-success">In Stock</span>
                                     @elseif ($productDetails->quantity >= 1)
-                                        <span class="meta-value text-warning">Only {{ $productDetails->quantity }} left</span>
+                                        <span class="meta-value text-warning">Only {{ $productDetails->quantity }}
+                                            left</span>
                                     @else
                                         <span class="meta-value text-danger">Out of Stock</span>
                                     @endif
@@ -111,36 +114,91 @@
 
                         </div>
 
-                        <!-- Price Section -->
-                        <div class="price-section">
-                            <span class="current-price">₹{{ $productDetails->offer_price }}</span>
-                            <span class="original-price">₹{{ $productDetails->orginal_rate }}</span>
-                            @if ($productDetails->discount)
-                                <span class="offer-badge">{{ $productDetails->discount }}% OFF</span>
-                            @endif
-                        </div>
-
-                        <!-- Countdown Timer -->
-                        {{-- <div class="countdown-section col-col">
-                            <div class="countdown-text">Hurry up! Sale ends in:</div>
-                            <div class="countdown-timer">
-                                <div class="countdown-item">
-                                    <div class="countdown-number" id="hours">00</div>
-                                </div>
-                                <div class="countdown-item">
-                                    <div class="countdown-number" id="minutes">05</div>
-                                </div>
-                                <div class="countdown-item">
-                                    <div class="countdown-number" id="seconds">59</div>
-                                </div>
-                                <div class="countdown-item">
-                                    <div class="countdown-number" id="milliseconds">47</div>
-                                </div>
-                            </div>
-                        </div> --}}
-
                         <form action="{{ route('buy.now') }}" method="POST" id="buyNowForm">
                             @csrf
+                            <!-- Price Section -->
+                            <div class="price-section">
+                                <span class="current-price">₹{{ $productDetails->offer_price }}</span>
+                                <span class="original-price">₹{{ $productDetails->orginal_rate }}</span>
+                                @if ($productDetails->discount)
+                                    <span class="offer-badge">{{ $productDetails->discount }}% OFF</span>
+                                @endif
+                                <p class="detail-para">Tax Included, <a href="#0"
+                                        style="text-decoration: underline">Shipping</a> Calculated at Checkout.</p>
+                                <style>
+                                    .color_picker input {
+                                        display: none;
+                                    }
+
+                                    .color_picker label {
+                                        cursor: pointer;
+                                        border: 1px solid #b5b5b5;
+                                        border-radius: 10px;
+                                        display: inline-block;
+                                        width: 25px;
+                                        height: 25px;
+                                        margin-right: 4px;
+                                    }
+
+                                    .color_picker input:checked+label span {
+                                        border: 2px solid rgb(12, 0, 0);
+                                        border-radius: 6px;
+                                        display: inline-block;
+                                        width: 25px;
+                                        height: 25px;
+                                    }
+
+                                    .product_detail_inner .product_detail_content .color_picker label:hover span {
+                                        outline: unset;
+                                        outline-offset: unset;
+                                    }
+                                </style>
+                                @php
+                                    $colors = $productDetails->colors;
+                                    $selectedColor = request('color') ?? optional($productDetails)->color;
+                                @endphp
+
+                                @if ($colors->isNotEmpty())
+                                    <div class="mt-3">
+                                        <h5 class="detail_subtitle">SELECT COLOR</h5>
+
+                                        <div class="color_picker">
+                                            @foreach ($colors as $index => $color)
+                                                <input type="radio"
+                                                    name="color"
+                                                    id="color-{{ $color->id }}"
+                                                    value="{{ $color->id }}"
+                                                    {{ ($selectedColor == $color->id || (!$selectedColor && $index === 0)) ? 'checked' : '' }}
+                                                    onchange="selectColor({{ $color->id }})" required>
+
+                                                <label for="color-{{ $color->id }}" title="{{ $color->color }}" style="background-color: {{ $color->color_code }}">
+                                                    <span style="background-color: {{ $color->color_code }}"></span>
+                                                </label>
+                                            @endforeach
+                                        </div>
+                                    </div>
+                                @endif
+                            </div>
+                            <!-- Countdown Timer -->
+                            {{-- <div class="countdown-section col-col">
+                                <div class="countdown-text">Hurry up! Sale ends in:</div>
+                                <div class="countdown-timer">
+                                    <div class="countdown-item">
+                                        <div class="countdown-number" id="hours">00</div>
+                                    </div>
+                                    <div class="countdown-item">
+                                        <div class="countdown-number" id="minutes">05</div>
+                                    </div>
+                                    <div class="countdown-item">
+                                        <div class="countdown-number" id="seconds">59</div>
+                                    </div>
+                                    <div class="countdown-item">
+                                        <div class="countdown-number" id="milliseconds">47</div>
+                                    </div>
+                                </div>
+                            </div> --}}
+
+                        
                             <input type="hidden" name="product_id" value="{{ $productDetails->id }}">
 
                             <div class="d-flex justify-content-between col-col">
@@ -150,13 +208,9 @@
                                         <button type="button" class="quantity-btn" id="decreaseBtn">
                                             <i class="fas fa-minus"></i>
                                         </button>
-                                        <input type="text" class="quantity-input" id="quantityInput" 
-                                            name="quantity"
-                                            value="1"
-                                            maxlength="2"
-                                            max="{{ $productDetails->quantity }}" 
-                                            min="1"
-                                            inputmode="numeric">
+                                        <input type="text" class="quantity-input" id="quantityInput" name="quantity"
+                                            value="1" maxlength="2" max="{{ $productDetails->quantity }}"
+                                            min="1" inputmode="numeric">
                                         <button type="button" class="quantity-btn" id="increaseBtn">
                                             <i class="fas fa-plus"></i>
                                         </button>
@@ -169,22 +223,22 @@
                                         @auth
                                             @if ($productDetails->cart && $productDetails->cart->product_id == $productDetails->id)
                                                 <!-- Already in cart -->
-                                                <a href="{{ route('show.cart.table') }}" class="btn-add-cart" style="text-decoration: none">
+                                                <a href="{{ route('show.cart.table') }}" class="btn-add-cart"
+                                                    style="text-decoration: none">
                                                     <i class="fas fa-shopping-cart"></i>
                                                     GO TO CART
                                                 </a>
                                             @else
                                                 <!-- Not in cart -->
-                                                <a href="{{ route('addto.cart', $productDetails->id) }}" 
-                                                class="btn-add-cart" 
-                                                id="addToCartBtn" 
-                                                style="text-decoration: none">
+                                                <a href="{{ route('addto.cart', $productDetails->id) }}" class="btn-add-cart"
+                                                    id="addToCartBtn" style="text-decoration: none">
                                                     <i class="fas fa-shopping-cart"></i>
                                                     ADD TO CART
                                                 </a>
                                             @endif
                                         @else
-                                            <a href="{{ route('user.login') }}" class="btn-add-cart" style="text-decoration: none">
+                                            <a href="{{ route('user.login') }}" class="btn-add-cart"
+                                                style="text-decoration: none">
                                                 <i class="fas fa-user"></i> LOGIN TO BUY
                                             </a>
                                         @endauth
@@ -209,31 +263,30 @@
                             <div class="wishlist-section">
                                 @if ($productDetails->isWishlist)
                                     <a href="{{ route('show.wishlist.list') }}"
-                                    class="btn btn-outline-secondary btn-sm d-inline-flex align-items-center gap-2 px-3 py-2 wishlist-btn"
-                                    title="Remove from Wishlist"
-                                    style="border-radius: 50px; font-weight: 500; white-space: nowrap;">
+                                        class="btn btn-outline-secondary btn-sm d-inline-flex align-items-center gap-2 px-3 py-2 wishlist-btn"
+                                        title="Remove from Wishlist"
+                                        style="border-radius: 50px; font-weight: 500; white-space: nowrap;">
                                         <i class="bi bi-heart-fill text-danger"></i>
                                         <span class="ms-4 text-dark">Remove from Wishlist</span>
                                     </a>
                                 @else
                                     @auth
                                         <a href="javascript:void(0)"
-                                        class="btn btn-outline-danger btn-sm d-inline-flex align-items-center gap-2 px-3 py-2 wishlist-btn"
-                                        data-id="{{ $productDetails->id }}"
-                                        data-url="{{ route('addto.wishlist', $productDetails->id) }}"
-                                        data-login="{{ route('user.login') }}"
-                                        title="Add to Wishlist"
-                                        style="border-radius: 50px; font-weight: 500; white-space: nowrap;">
+                                            class="btn btn-outline-danger btn-sm d-inline-flex align-items-center gap-2 px-3 py-2 wishlist-btn"
+                                            data-id="{{ $productDetails->id }}"
+                                            data-url="{{ route('addto.wishlist', $productDetails->id) }}"
+                                            data-login="{{ route('user.login') }}" title="Add to Wishlist"
+                                            style="border-radius: 50px; font-weight: 500; white-space: nowrap;">
                                             <i class="bi bi-heart"></i>
-                                            <span class="ms-4">Add to Wishlist</span> 
+                                            <span class="ms-4">Add to Wishlist</span>
                                         </a>
                                     @else
                                         <a href="{{ route('user.login') }}?type=guest"
-                                        class="btn btn-outline-danger btn-sm d-inline-flex align-items-center gap-2 px-3 py-2"
-                                        title="Add to Wishlist"
-                                        style="border-radius: 50px; font-weight: 500; white-space: nowrap;">
+                                            class="btn btn-outline-danger btn-sm d-inline-flex align-items-center gap-2 px-3 py-2"
+                                            title="Add to Wishlist"
+                                            style="border-radius: 50px; font-weight: 500; white-space: nowrap;">
                                             <i class="bi bi-heart"></i>
-                                           <span class="ms-4">Add to Wishlist</span> 
+                                            <span class="ms-4">Add to Wishlist</span>
                                         </a>
                                     @endauth
                                 @endif
@@ -245,8 +298,10 @@
                                 <div class="share-buttons d-flex gap-2">
 
                                     {{-- Copy Link --}}
-                                    <button onclick="copyUrl('{{ route('product.details.show', $productDetails->id) }}')" class="share-btn">
-                                        <i class="fa-regular fa-copy"></i>
+                                    <button
+                                        onclick="copyUrl(this, '{{ route('product.details.show', $productDetails->id) }}')"
+                                        title="Copy product link">
+                                        <i class="fa fa-copy"></i>
                                     </button>
 
                                     {{-- WhatsApp --}}
@@ -255,10 +310,10 @@
                                         <i class="fab fa-whatsapp"></i>
                                     </button>
 
-                                    {{-- Twitter / X --}}
-                                    <button class="twitter"
-                                        onclick="shareOnTwitter('{{ route('product.details.show', $productDetails->id) }}', '{{ $productDetails->product_name }}')">
-                                        <i class="fa-brands fa-x-twitter"></i>
+                                    {{-- Instagram --}}
+                                    <button class="instagram"
+                                        onclick="shareOnInstagram('{{ route('product.details.show', $productDetails->id) }}')">
+                                        <i class="fa-brands fa-instagram"></i>
                                     </button>
 
                                     {{-- Facebook --}}
@@ -272,11 +327,30 @@
                         </div>
 
                         <script>
-                            function copyUrl(url) {
-                                navigator.clipboard.writeText(url);
-                                document.title = '✅ Product link copied!';
+                            function copyUrl(el, url) {
+                                const originalTitle = el.getAttribute('title') || 'Copy product link';
+
+                                if (navigator.clipboard && window.isSecureContext) {
+                                    navigator.clipboard.writeText(url).then(() => {
+                                        showCopied(el, originalTitle);
+                                    });
+                                } else {
+                                    // Fallback
+                                    const input = document.createElement('input');
+                                    input.value = url;
+                                    document.body.appendChild(input);
+                                    input.select();
+                                    document.execCommand('copy');
+                                    document.body.removeChild(input);
+                                    showCopied(el, originalTitle);
+                                }
+                            }
+
+                            function showCopied(el, originalTitle) {
+                                el.setAttribute('title', '✅ Product link copied!');
+
                                 setTimeout(() => {
-                                    document.title = '{{$productDetails->product_name}}';
+                                    el.setAttribute('title', originalTitle);
                                 }, 2000);
                             }
 
@@ -285,9 +359,10 @@
                                 window.open(whatsappUrl, '_blank');
                             }
 
-                            function shareOnTwitter(url, title) {
-                                const tweetUrl = `https://twitter.com/intent/tweet?url=${encodeURIComponent(url)}&text=${encodeURIComponent(title)}`;
-                                window.open(tweetUrl, '_blank', 'width=600,height=400');
+                            function shareOnInstagram(url) {
+                                navigator.clipboard.writeText(url).then(() => {
+                                    window.open('https://www.instagram.com/', '_blank');
+                                });
                             }
 
                             function shareOnFacebook(url) {
