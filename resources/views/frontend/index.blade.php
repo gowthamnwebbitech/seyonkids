@@ -577,7 +577,7 @@
                 </div>
 
                 <!-- Slide 2 -->
-                <div class="carousel-item">
+                {{-- <div class="carousel-item">
                     <div class="row g-3">
                         <!-- Card 6 -->
                         <div class="reels-card">
@@ -655,7 +655,7 @@
                             </article>
                         </div>
                     </div>
-                </div>
+                </div> --}}
             </div>
         </div>
     </section>

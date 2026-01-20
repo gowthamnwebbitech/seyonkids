@@ -324,6 +324,14 @@ Route::middleware(['admin.auth'])->group(function () {
         Route::get('/product-coupon_code-edit/{id}', 'coupon_code_edit')->name('admin.product.coupon_code.edit');
         Route::post('/product-coupon_code-update', 'coupon_code_update')->name('admin.product.coupon_code.update');
 
+        //color code
+        Route::get('/color','color')->name('admin.color');
+        Route::get('/product-color-add','color_add')->name('admin.product.color.add');
+        Route::post('/product-color-store','color_store')->name('admin.product.color.store');
+        Route::get('/product-color-delete/{id}','color_delete')->name('product.color.delete');
+        Route::get('/product-color-edit/{id}','color_edit')->name('admin.product.color.edit');
+        Route::post('/product-color-update','color_update')->name('admin.product.color.update');
+        
         Route::post('/admin-product-image-delete', 'deleteImage')->name('admin.product.image.delete');
         Route::post('/admin-product-update', 'adminProductUpdate')->name('admin.product.update');
     });

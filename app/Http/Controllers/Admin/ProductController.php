@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Color;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
@@ -226,6 +227,7 @@ class ProductController extends Controller
             'file1'           => 'required|image|mimes:jpeg,png,jpg,gif,svg,webp|max:2048',
             'file2.*'         => 'nullable|image|mimes:jpeg,png,jpg,gif,svg,webp|max:2048',
             'description'     => 'required|string',
+            'colors.*'        => 'nullable|exists:colors,id',
         ]);
 
         date_default_timezone_set('Asia/Kolkata');
@@ -266,6 +268,9 @@ class ProductController extends Controller
 
         $product->save();
         $product->shopByAges()->sync($request->shop_by_age_id);
+        if ($request->has('colors')) {
+            $product->colors()->sync($request->colors); // Save selected colors
+        }
         // Gallery images
         if ($request->hasFile('file2')) {
             foreach ($request->file('file2') as $index => $image) {
@@ -644,5 +649,64 @@ class ProductController extends Controller
         if ($submenu) {
             return redirect()->route('admin.product.submenu')->with('success', 'Product submenu has been deleted successfully');
         }
+    }
+
+    //color code
+   
+    public function color(Request $request)
+    {
+        $color_code = Color::latest()->get();
+        return view('admin.product.color.index',compact('color_code'));
+    }
+    
+    public function color_add(Request $request)
+    {
+        return view('admin.product.color.add');
+    }
+    
+    public function color_store(Request $request)
+    {
+        $request->validate([
+            'color' => 'required|string|max:50',
+            'code'  => 'required|regex:/^#[A-Fa-f0-9]{6}$/',
+        ]);
+
+        $color_code                = new Color();
+        $color_code->color_code    = $request->code;
+        $color_code->color         = $request->color;
+        $color_code->save();
+        if($color_code)
+        {
+            return redirect()->route('admin.color')->with('success', 'Color code has been added successfully');
+        }
+    }
+    
+    public function color_edit($id)
+    {
+        $color_code = Color::findOrFail($id);
+        return view('admin.product.color.edit',compact('color_code'));
+    }
+    
+    
+    public function color_update(Request $request)
+    {
+        $color_code                 = Color::where('id',$request->coupon_id)->first();
+        $color_code->color_code     = $request->code;
+        $color_code->color          = $request->color;
+        $color_code->save();
+        if($color_code)
+        {
+            return redirect()->route('admin.color')->with('success', 'Color code has been updated successfully');
+        }
+    }
+     
+    public function color_delete($id)
+    {
+        $color_code                 = Color::where('id',$id)->first();
+        if($color_code){
+            $color_code->delete();
+            return redirect()->route('admin.color')->with('success', 'Color code has been deleted successfully');
+        }
+        return redirect()->route('admin.color')->with('error', 'Color code failed to delete');
     }
 }

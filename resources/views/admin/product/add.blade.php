@@ -37,6 +37,8 @@
 
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0/dist/css/select2.min.css" rel="stylesheet" />
+
     <div class="profile-tab">
         <div class="custom-tab-1">
             <ul class="nav nav-tabs">
@@ -273,15 +275,25 @@
                                     <div class="mb-3 col-md-6">
                                         <label class="form-label">Status</label><br>
                                         <div class="form-check form-check-inline">
-                                            <input class="form-check-input" type="radio" name="status" id="active"
-                                                value="1" {{ old('status') == 1 ? 'checked' : '' }}>
+                                            <input class="form-check-input"
+                                                type="radio"
+                                                name="status"
+                                                id="active"
+                                                value="1"
+                                                {{ old('status', 1) == 1 ? 'checked' : '' }}>
                                             <label class="form-check-label" for="active">Active</label>
                                         </div>
+
                                         <div class="form-check form-check-inline">
-                                            <input class="form-check-input" type="radio" name="status" id="inactive"
-                                                value="0" {{ old('status') == 0 ? 'checked' : '' }}>
+                                            <input class="form-check-input"
+                                                type="radio"
+                                                name="status"
+                                                id="inactive"
+                                                value="0"
+                                                {{ old('status', 1) == 0 ? 'checked' : '' }}>
                                             <label class="form-check-label" for="inactive">Inactive</label>
                                         </div>
+
                                         @error('status')
                                             <div class="text-danger">{{ $message }}</div>
                                         @enderror
@@ -301,10 +313,43 @@
                                 <input type="checkbox" id="featured" name="featured" value="1"
                                     {{ old('featured') ? 'checked' : '' }}>
                                 <label for="featured"> Featured</label><br><br>
+                                
+                                <div class="mb-3 col-md-3">
+                                    <label class="form-label">Is Color</label>
 
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" id="iscolor_yes" name="is_color" value="1"
+                                            {{ old('is_color') == '1' ? 'checked' : '' }}>
+                                        <label class="form-check-label" for="iscolor_yes">Yes</label>
+                                    </div>
+
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" id="iscolor_no" name="is_color" value="0"
+                                            {{ old('is_color', '0') == '0' ? 'checked' : '' }}>
+                                        <label class="form-check-label" for="iscolor_no">No</label>
+                                    </div>
+                                </div>
+
+                                <div class="mb-3 col-md-4" id="colorSection">
+                                    <label class="form-label">Select Colors</label>
+
+                                    <select class="form-control color-multiselect"
+                                            name="colors[]"
+                                            multiple="multiple">
+                                            @php
+                                                $colors = App\Models\Color::all();
+                                            @endphp
+                                        @foreach($colors as $color)
+                                            <option value="{{ $color->id }}">{{ $color->color }}</option>
+                                        @endforeach
+                                    </select>
+
+                                    @error('colors')
+                                        <div class="text-danger">{{ $message }}</div>
+                                    @enderror
+                                </div>
                                 <button class="btn btn-primary" type="submit">Add Product</button>
                             </form>
-
                         </div>
                     </div>
                 </div> <br><br><br>
@@ -314,15 +359,21 @@
     </div>
 @endsection
 
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 <script src="https://cdn.ckeditor.com/4.16.2/standard/ckeditor.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0/dist/js/select2.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
 <script>
     $(document).ready(function() {
         CKEDITOR.replace('description');
+        $('.color-multiselect').select2({
+            placeholder: "Select Colors",
+            allowClear: true,
+            width: '100%'
+        });
     });
 </script>
-
 <script type="text/javascript">
     $(document).ready(function() {
         var selectedCategory = "{{ old('category', $selectedCategory ?? '') }}";
@@ -549,5 +600,24 @@
                 $('#pages').val('');                  // optional: clear value
             }
         });
+    });
+</script>
+<script>
+    $(document).ready(function () {
+
+        function toggleColorSection() {
+            if ($('input[name="is_color"]:checked').val() == '1') {
+                $('#colorSection').show();
+            } else {
+                $('#colorSection').hide();
+            }
+        }
+
+        toggleColorSection();
+
+        $('input[name="is_color"]').on('change', function () {
+            toggleColorSection();
+        });
+
     });
 </script>
