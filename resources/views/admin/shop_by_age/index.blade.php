@@ -85,6 +85,7 @@
                         <th>CATEGORY</th>
                         <th style="width:30%">IMAGE</th>
                         <th style="width:15%">STATUS</th>
+                        <th style="width:15%">PRIORITY</th>
                         <th>ACTION</th>
                     </tr>
                 </thead>
@@ -102,6 +103,9 @@
                                 @else
                                     <span class="badge badge-danger">Inactive</span>
                                 @endif
+                            </td>
+                            <td>
+                                {{ $data->priority }}
                             </td>
                             <td>
                                 <div class="d-flex">

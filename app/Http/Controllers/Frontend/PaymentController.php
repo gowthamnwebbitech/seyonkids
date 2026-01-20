@@ -58,7 +58,7 @@ class PaymentController extends Controller
 
         $payment_method   = $request->payment_method;
         $shipping_address = $request->shipping_address;
-        $shipping_cost    = $primary_address->shippingPrice?->shipping_cost ?? 90;
+        $shipping_cost    = $request->shipping_cost ? $primary_address->shippingPrice?->shipping_cost : $request->shipping_code;
         
         $total_amount     = $total_amount + $shipping_cost;
         $finalTotal       = $total_amount - round($discountAmount);

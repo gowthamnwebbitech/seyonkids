@@ -11,8 +11,8 @@ use Illuminate\Support\Str;
 class ShopByAgeController extends Controller
 {
     public function index(){
-        $shop_by_age = ShopByAge::get();
-        return view('admin.shop_by_age.index',compact('shop_by_age'));
+        $shop_by_age = ShopByAge::orderBy('priority', 'asc')->get();
+        return view('admin.shop_by_age.index', compact('shop_by_age'));
     }
 
     public function create(){
@@ -23,6 +23,7 @@ class ShopByAgeController extends Controller
         $request->validate([
             'title' => 'required|string|max:255',
             'url'   => 'required|string|max:255',
+            'priority' => 'required|integer|min:0',
             'image' => 'required|image|mimes:jpg,jpeg,png,gif,webp|max:8048',
         ]);
         $shop_by_age = new ShopByAge();
@@ -47,6 +48,7 @@ class ShopByAgeController extends Controller
         $shop_by_age->title = $request->title;
         $shop_by_age->url   = $request->url;
         $shop_by_age->slug  = $slug;
+        $shop_by_age->priority = $request->priority;
         $shop_by_age->status = $request->status ?? 1;
         $shop_by_age->save();
     
@@ -70,6 +72,7 @@ class ShopByAgeController extends Controller
         $request->validate([
             'title'  => 'required|string|max:255',
             'url'    => 'required|string|max:255',
+            'priority' => 'required|integer|min:0',
             'status' => 'required|in:0,1',
         ]);
 
@@ -90,6 +93,7 @@ class ShopByAgeController extends Controller
         $shop_by_age->title   = $request->title;
         $shop_by_age->url     = $request->url;
         $shop_by_age->slug    = $slug;
+        $shop_by_age->priority = $request->priority;
         $shop_by_age->status  = $request->status;
 
         if ($request->hasFile('image')) {

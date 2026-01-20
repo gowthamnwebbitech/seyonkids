@@ -38,7 +38,8 @@
 						</a>
                         <ul aria-expanded="false">
                             <li><a href="{{ route('admin.product') }}">All Product</a></li>
-                            <li><a href="{{ route('admin.product.add') }}">Add Product</a></li>
+                            <li><a href="{{ route('admin.product.add') }}">Add New Product</a></li>
+							<li><a href="{{ route('admin.color') }}">Color</a></li>
                         </ul>
                     </li>
                                        

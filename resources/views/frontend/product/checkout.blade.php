@@ -670,6 +670,7 @@
                                         <span class="total-amount">₹{{ $shipping_cost }}</span>
                                     </div>
                                 @endif
+                                <input name="shipping_cost" value="{{ $shipping_cost }}" type="hidden">
                                 @if (session()->has('coupon'))
                                     @php
                                         $coupon_price = round($subtotal - $discount);

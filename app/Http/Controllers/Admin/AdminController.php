@@ -25,12 +25,14 @@ use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Validation\Rule;
 use Mail;
 use PDF;
+use Illuminate\Support\Facades\Artisan;
 
 class AdminController extends Controller
 {
 
     public function index()
     {
+        // Artisan::call('migrate');
         // TOTALS
         $totalUsers      = User::count();
         $totalProducts   = Product::count();

@@ -25,6 +25,10 @@ class Product extends Model
     {
         return $this->belongsToMany(ShopByAge::class, 'product_shop_by_age', 'product_id', 'shop_by_age_id');
     }
+    public function colors()
+    {
+        return $this->belongsToMany(Color::class, 'color_product', 'product_id', 'color_id');
+    }
     public function cart()
     {
         return $this->hasOne(Cart::class)->where('user_id', auth()->id());

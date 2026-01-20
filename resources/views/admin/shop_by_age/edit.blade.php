@@ -51,7 +51,7 @@
                                 enctype="multipart/form-data">
                                 @csrf
                                 <div class="row">
-                                    <div class="mb-3 col-md-6">
+                                    <div class="mb-3 col-md-4">
                                         <label class="form-label">Age Title</label>
                                         <input type="text" name="title" class="form-control" placeholder="Enter Title"
                                             value="{{ $shop_by_age->title }}" pattern="[A-Za-z0-9 _-]+"
@@ -61,7 +61,7 @@
                                             <div class="text-danger">{{ $message }}</div>
                                         @enderror
                                     </div>
-                                    <div class="mb-3 col-md-6">
+                                    <div class="mb-3 col-md-4">
                                         <label class="form-label">Image
                                             <span class="text-muted">
                                                 (Recommended size: 1600 × 2400 px, Max file size: 1 MB)
@@ -80,6 +80,16 @@
                                                 {{-- <div class="delete-icon"><a href="{{ route('product.category.imagedelete', ['id' => $category->id, 'name' => $shop_by_age->image]) }}"><i class="fa fa-times-circle" aria-hidden="true"></i></a></div> --}}
                                             </div>
                                         @endif
+                                    </div>
+                                    <div class="mb-3 col-md-4">
+                                        <label class="form-label">Priority</label>
+                                        <input type="number"
+                                            name="priority"
+                                            min="0"
+                                            class="form-control"
+                                            value="{{ old('priority', $shop_by_age->priority ?? 0) }}"
+                                            required>
+                                        @error('priority') <div class="text-danger">{{ $message }}</div> @enderror
                                     </div>
                                     <div class="row align-items-center">
                                         <div class="mb-3 col-md-6">

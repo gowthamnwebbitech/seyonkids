@@ -307,6 +307,43 @@
                                 <input type="checkbox" id="featured" name="featured" value="1"
                                     {{ old('featured', $product->featured) == 1 ? 'checked' : '' }}>
                                 <label for="featured"> Featured</label><br><br>
+                                <div class="mb-3 col-md-3">
+                                    <label class="form-label">Is Color</label>
+
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" id="iscolor_yes" name="is_color" value="1"
+                                            {{ old('is_color', $product->is_color) == '1' ? 'checked' : '' }}>
+                                        <label class="form-check-label" for="iscolor_yes">Yes</label>
+                                    </div>
+
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" id="iscolor_no" name="is_color" value="0"
+                                            {{ old('is_color', $product->is_color) == '0' ? 'checked' : '' }}>
+                                        <label class="form-check-label" for="iscolor_no">No</label>
+                                    </div>
+                                </div>
+
+                                <div class="mb-3 col-md-4" id="colorSection">
+                                    <label class="form-label">Select Colors</label>
+
+                                    <select class="form-control color-multiselect"
+                                            name="colors[]"
+                                            multiple="multiple">
+                                        @php
+                                            $colors = App\Models\Color::all();
+                                            $selectedColors = old('colors', $product->colors->pluck('id')->toArray());
+                                        @endphp
+                                        @foreach($colors as $color)
+                                            <option value="{{ $color->id }}" {{ in_array($color->id, $selectedColors) ? 'selected' : '' }}>
+                                                {{ $color->color }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+
+                                    @error('colors')
+                                        <div class="text-danger">{{ $message }}</div>
+                                    @enderror
+                                </div>
 
                                 <button class="btn btn-primary" type="submit">Update Product</button>
                             </form>
@@ -448,6 +485,25 @@ $(document).ready(function () {
         });
 
 });
+</script>
+<script>
+    $(document).ready(function () {
+
+        function toggleColorSection() {
+            if ($('input[name="is_color"]:checked').val() == '1') {
+                $('#colorSection').show();
+            } else {
+                $('#colorSection').hide();
+            }
+        }
+
+        toggleColorSection(); // initial check on page load
+
+        $('input[name="is_color"]').on('change', function () {
+            toggleColorSection();
+        });
+
+    });
 </script>
 
 @endsection

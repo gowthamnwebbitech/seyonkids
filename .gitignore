@@ -22,6 +22,7 @@ Thumbs.db
 /storage/framework/sessions
 /storage/framework/views
 /public/storage
+/public/banner_image
 /public/uploads
 /public/build
 /public/hot
