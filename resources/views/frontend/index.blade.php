@@ -102,6 +102,61 @@
                 opacity: 0;
             }
         }
+        .hero-banner {
+            position: relative;
+            height: 520px;
+            background-size: cover;
+            background-position: center;
+            display: flex;
+            align-items: center;
+        }
+
+        .hero-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(
+                90deg,
+                rgba(0,0,0,0.65) 0%,
+                rgba(0,0,0,0.35) 50%,
+                rgba(0,0,0,0.1) 100%
+            );
+        }
+
+        
+        .hero-content {
+            position: relative;
+            max-width: 520px;
+            margin: 0 auto;  /* 🔥 centers block */
+            text-align: center;
+        }
+
+        .hero-title {
+            font-size: 42px;
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: white;
+        }
+        .hero-text {
+            color: #eeeef0 !important;
+        }
+        .hero-cta {
+            display: inline-block;
+            padding: 12px 28px;
+            background: #ff6a00;
+            color: #fff;
+            font-weight: 600;
+            border-radius: 30px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .hero-cta:hover {
+            background: #e85d00;
+        }
+        .hero-cta {
+            margin-top: 20px;
+            display: inline-block;
+        }
     </style>
 
     <!-- Style css -->
@@ -144,23 +199,28 @@
                 @endphp
                 @if ($sliders->isNotEmpty())
                     @foreach ($sliders as $slider)
-                        <div class="carousel-item active">
-                            <div class="hero">
-                                <div class="row g-0 align-items-center">
-                                    <div class="col-lg-6">
-                                        <img src="{{ asset($slider->image) }}" class="hero-img" alt="Kids playing">
-                                    </div>
-                                    <div class="col-lg-6">
-                                        <div class="hero-copy">
-                                            <h2 class="hero-title">{{ $slider->title ?? '' }}</h2>
-                                            <p class="hero-text">{{ $slider->description ?? '' }}</p>
-                                            <a href="{{ $slider->banner_link ?? '' }}" class="hero-cta">Shop
-                                                Now</a>
-                                        </div>
+                        <div class="carousel-item {{ $loop->first ? 'active' : '' }}">
+                            <div class="hero-banner"
+                                style="background-image: url('{{ asset($slider->image) }}')">
+
+                                <div class="hero-overlay"></div>
+
+                                <div class="container">
+                                    <div class="hero-content">
+                                        <h2 class="hero-title">{{ $slider->title }}</h2>
+                                        <p class="hero-text">{{ $slider->description }}</p>
+
+                                        @if($slider->banner_link)
+                                            <a href="{{ $slider->banner_link }}" class="hero-cta">
+                                                Shop Now
+                                            </a>
+                                        @endif
                                     </div>
                                 </div>
+
                             </div>
                         </div>
+
                     @endforeach
                 @endif
             </div>
