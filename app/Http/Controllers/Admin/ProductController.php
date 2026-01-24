@@ -246,9 +246,9 @@ class ProductController extends Controller
         $product->offer_price  = $request->offer_price;
         $product->is_color     = $request->is_color;
         // $product->gst          = $request->gst;
-        $product->sku          = $request->pages;
+        $product->sku          = $request->sku;
         if ($request->product_type == "book") {
-            $product->no_of_pages = $request->sku;
+            $product->no_of_pages = $request->pages;
         }
         $product->keyword      = $request->keywords;
         $product->status       = $request->status;
@@ -271,10 +271,23 @@ class ProductController extends Controller
         $product->shopByAges()->sync($request->shop_by_age_id);
 
         // Sync colors only if is_color = 1
-        if ($request->is_color == 1 && $request->has('colors')) {
-            $product->colors()->sync($request->colors);
+        if ($request->is_color == 1 && $request->filled('color')) {
+
+            $syncData = [];
+
+            foreach ($request->color as $row) {
+
+                if (!empty($row['colors'])) {
+                    $syncData[$row['colors']] = [
+                        'qty' => $row['color_quantity'] ?? 0
+                    ];
+                }
+            }
+
+            $product->colors()->sync($syncData);
+
         } else {
-            $product->colors()->sync([]); // remove previously attached colors if any
+            $product->colors()->sync([]);
         }
 
         // Gallery images
@@ -538,9 +551,21 @@ class ProductController extends Controller
         $product->save();
 
         // Sync shop by ages
-        $product->shopByAges()->sync($request->shop_by_age_id);
-        if ($request->is_color == 1 && $request->has('colors')) {
-            $product->colors()->sync($request->colors);
+        if ($request->is_color == 1 && $request->filled('color')) {
+
+            $syncData = [];
+
+            foreach ($request->color as $row) {
+
+                if (!empty($row['colors'])) {
+                    $syncData[$row['colors']] = [
+                        'qty' => $row['color_quantity'] ?? 0
+                    ];
+                }
+            }
+
+            $product->colors()->sync($syncData);
+
         } else {
             $product->colors()->sync([]);
         }

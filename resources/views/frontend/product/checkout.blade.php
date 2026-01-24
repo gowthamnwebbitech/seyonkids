@@ -525,16 +525,16 @@
                                                     border: 1px solid #b5b5b5;
                                                     border-radius: 10px;
                                                     display: inline-block;
-                                                    width: 25px;
-                                                    height: 25px;
+                                                    width: 15px;
+                                                    height: 15px;
                                                     margin-right: 4px;
                                                 }
                                             </style>
                                             <div class="color_picker">
                                                 @if($cartItem->color_id && $cartItem->colorData)
                                                     @if($cartItem->colorData)
-                                                        <label for="color" title="{{ $cartItem->colorData->color }}" style="background-color: {{ $cartItem->colorData->color_code }}">
-                                                            <span style="background-color: {{ $cartItem->colorData->color_code }}"></span>
+                                                        <label for="color" title="{{ $cartItem->colorData->color->color }}" style="background-color: {{ $cartItem->colorData->color->color_code }}">
+                                                            <span style="background-color: {{ $cartItem->colorData->color->color_code }}"></span>
                                                         </label>
                                                     @endif
                                                 @endif

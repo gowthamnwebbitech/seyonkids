@@ -126,8 +126,8 @@
                                                 <div class="color_picker ms-2">
                                                     @if($cart->color_id && $cart->colorData)
                                                         @if($cart->colorData)
-                                                            <label for="color" title="{{ $cart->colorData->color }}" style="background-color: {{ $cart->colorData->color_code }}">
-                                                                <span style="background-color: {{ $cart->colorData->color_code }}"></span>
+                                                            <label for="color" title="{{ $cart->colorData->color->color }}" style="background-color: {{ $cart->colorData->color->color_code }}">
+                                                                <span style="background-color: {{ $cart->colorData->color->color_code }}"></span>
                                                             </label>
                                                         @endif
                                                     @endif

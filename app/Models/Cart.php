@@ -31,6 +31,6 @@ class Cart extends Model
 
     public function colorData()
     {
-        return $this->belongsTo(Color::class, 'color_id');
+        return $this->belongsTo(ColorProduct::class, 'color_id', 'id');
     }
 }

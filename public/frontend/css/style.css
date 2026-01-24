@@ -4841,3 +4841,42 @@ hr {
     margin-bottom: 0;
     margin-top: 5px;
 }
+/* <style> */
+.color_picker input {
+    display: none;
+}
+
+.color_picker label {
+    cursor: pointer;
+    border: 1px solid #b5b5b5;
+    border-radius: 10px;
+    display: inline-block;
+    width: 25px;
+    height: 25px;
+    margin-right: 4px;
+}
+
+.color_picker input:checked+label span {
+    border: 2px solid rgb(12, 0, 0);
+    border-radius: 6px;
+    display: inline-block;
+    width: 25px;
+    height: 25px;
+}
+
+.product_detail_inner .product_detail_content .color_picker label:hover span {
+    outline: unset;
+    outline-offset: unset;
+}
+.color_picker .color-dot {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    cursor: pointer;
+    border: 1px solid #ccc;
+    display: inline-block;
+}
+
+.color_picker input[type="radio"]:checked + .color-dot {
+    border: 2px solid #000;
+}

@@ -322,28 +322,84 @@
                                         <label class="form-check-label" for="iscolor_no">No</label>
                                     </div>
                                 </div>
+                                
+                                @if(isset($product->colors) && $product->colors->isNotEmpty())
+                                    <div id="colorWrapper">
+                                        @foreach ($product->colors as $index => $productColor)
+                                            <div class="row colorSection">
+                                                <div class="mb-3 col-md-4">
+                                                    <label class="form-label">Select Colors</label>
 
-                                <div class="mb-3 col-md-4" id="colorSection">
-                                    <label class="form-label">Select Colors</label>
+                                                    <select class="form-select" name="color[{{ $loop->iteration }}][colors]" required>
+                                                        <option value=""> -- select -- </option>
+                                                        @foreach(App\Models\Color::all() as $color)
+                                                            <option value="{{ $color->id }}"
+                                                                {{ $productColor->id == $color->id ? 'selected' : '' }}>
+                                                                {{ $color->color }}
+                                                            </option>
+                                                        @endforeach
+                                                    </select>
+                                                </div>
 
-                                    <select class="form-control color-multiselect"
-                                            name="colors[]"
-                                            multiple="multiple">
-                                        @php
-                                            $colors = App\Models\Color::all();
-                                            $selectedColors = old('colors', $product->colors->pluck('id')->toArray());
-                                        @endphp
-                                        @foreach($colors as $color)
-                                            <option value="{{ $color->id }}" {{ in_array($color->id, $selectedColors) ? 'selected' : '' }}>
-                                                {{ $color->color }}
-                                            </option>
+                                                <div class="mb-3 col-md-4">
+                                                    <label class="form-label">Quantity</label>
+
+                                                    <input type="text"
+                                                        name="color[{{ $loop->iteration }}][color_quantity]"
+                                                        class="form-control"
+                                                        value="{{ old("color_quantity.$loop->iteration", $productColor->pivot->qty) }}"
+                                                        placeholder="Ex: 2"
+                                                        required>
+                                                </div>
+
+                                                <div class="mb-3 col-md-2 d-flex align-items-end">
+                                                    @if($loop->first)
+                                                        <button type="button" class="btn btn-success addRow">+</button>
+                                                    @else
+                                                        <button type="button" class="btn btn-danger removeRow">−</button>
+                                                    @endif
+                                                </div>
+                                            </div>
                                         @endforeach
-                                    </select>
+                                    </div>
+                                @else
+                                    <div id="colorWrapper">
+                                        <div class="row colorSection">
+                                            <div class="mb-3 col-md-4">
+                                                <label class="form-label">Select Colors</label>
 
-                                    @error('colors')
-                                        <div class="text-danger">{{ $message }}</div>
-                                    @enderror
-                                </div>
+                                                <select class="form-select" name="color[1][colors]" required>
+                                                    <option value=""> -- select -- </option>
+                                                    @foreach(App\Models\Color::all() as $color)
+                                                        <option value="{{ $color->id }}" {{ old('colors.1') == $color->id ? 'selected' : '' }}> {{ $color->color }}</option>
+                                                    @endforeach
+                                                </select>
+
+                                                @error('colors.1')
+                                                    <div class="text-danger">{{ $message }}</div>
+                                                @enderror
+                                            </div>
+
+                                            <div class="mb-3 col-md-4">
+                                                <label class="form-label">Quantity</label>
+
+                                                <input type="text"
+                                                    name="color[1][color_quantity]"
+                                                    class="form-control"
+                                                    value="{{ old('quantity.1') }}"
+                                                    placeholder="Ex: 2" required>
+
+                                                @error('quantity.1')
+                                                    <div class="text-danger">{{ $message }}</div>
+                                                @enderror
+                                            </div>
+
+                                            <div class="mb-3 col-md-2 d-flex align-items-end">
+                                                <button type="button" class="btn btn-success addRow">+</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                @endif
 
                                 <button class="btn btn-primary" type="submit">Update Product</button>
                             </form>
@@ -356,114 +412,114 @@
     </div>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://cdn.ckeditor.com/4.16.2/standard/ckeditor.js"></script>
-    <script>
-$(document).ready(function () {
+<script>
+    $(document).ready(function () {
 
-    // CKEditor
-    CKEDITOR.replace('description');
+        // CKEditor
+        CKEDITOR.replace('description');
 
-    let selectedCategory    = "{{ $selectedCategory }}";
-    let selectedSubcategory = "{{ $selectedSubcategory }}";
-    let selectedSubmenu     = "{{ $selectedSubmenu }}";
+        let selectedCategory    = "{{ $selectedCategory }}";
+        let selectedSubcategory = "{{ $selectedSubcategory }}";
+        let selectedSubmenu     = "{{ $selectedSubmenu }}";
 
-    /* ===============================
-       LOAD SUBCATEGORIES
-    =============================== */
-    function loadSubcategories(categoryId, selectedId = null) {
-        if (!categoryId) {
-            $('#subcategory').html('<option value="">Please select</option>');
-            $('#submenu').html('<option value="">Please select</option>');
-            return;
-        }
+        /* ===============================
+        LOAD SUBCATEGORIES
+        =============================== */
+        function loadSubcategories(categoryId, selectedId = null) {
+            if (!categoryId) {
+                $('#subcategory').html('<option value="">Please select</option>');
+                $('#submenu').html('<option value="">Please select</option>');
+                return;
+            }
 
-        $.ajax({
-            url: "{{ route('get-subcategories', ':id') }}".replace(':id', categoryId),
-            type: "GET",
-            success: function (response) {
-                let html = '<option value="">Please select</option>';
-                $.each(response, function (id, name) {
-                    html += `<option value="${id}" ${id == selectedId ? 'selected' : ''}>${name}</option>`;
-                });
-                $('#subcategory').html(html);
+            $.ajax({
+                url: "{{ route('get-subcategories', ':id') }}".replace(':id', categoryId),
+                type: "GET",
+                success: function (response) {
+                    let html = '<option value="">Please select</option>';
+                    $.each(response, function (id, name) {
+                        html += `<option value="${id}" ${id == selectedId ? 'selected' : ''}>${name}</option>`;
+                    });
+                    $('#subcategory').html(html);
 
-                if (selectedId) {
-                    loadSubmenus(selectedId, selectedSubmenu);
+                    if (selectedId) {
+                        loadSubmenus(selectedId, selectedSubmenu);
+                    }
                 }
+            });
+        }
+
+        /* ===============================
+        LOAD SUBMENUS
+        =============================== */
+        function loadSubmenus(subcategoryId, selectedId = null) {
+            if (!subcategoryId) {
+                $('#submenu').html('<option value="">Please select</option>');
+                return;
+            }
+
+            $.ajax({
+                url: "{{ route('get-submenu', ':id') }}".replace(':id', subcategoryId),
+                type: "GET",
+                success: function (response) {
+                    let html = '<option value="">Please select</option>';
+                    $.each(response, function (id, name) {
+                        html += `<option value="${id}" ${id == selectedId ? 'selected' : ''}>${name}</option>`;
+                    });
+                    $('#submenu').html(html);
+                }
+            });
+        }
+
+        /* ===============================
+        ON PAGE LOAD (EDIT + VALIDATION)
+        =============================== */
+        if (selectedCategory) {
+            loadSubcategories(selectedCategory, selectedSubcategory);
+        }
+
+        /* ===============================
+        ON CHANGE EVENTS
+        =============================== */
+        $('#category').on('change', function () {
+            loadSubcategories(this.value);
+        });
+
+        $('#subcategory').on('change', function () {
+            loadSubmenus(this.value);
+        });
+
+        /* ===============================
+        PRODUCT TYPE → PAGES
+        =============================== */
+        $('#product_type').on('change', function () {
+            if ($(this).val() === 'book') {
+                $('#pages_row').removeClass('d-none');
+            } else {
+                $('#pages_row').addClass('d-none');
             }
         });
-    }
 
-    /* ===============================
-       LOAD SUBMENUS
-    =============================== */
-    function loadSubmenus(subcategoryId, selectedId = null) {
-        if (!subcategoryId) {
-            $('#submenu').html('<option value="">Please select</option>');
-            return;
-        }
+        /* ===============================
+        DISCOUNT CALCULATION
+        =============================== */
+        $('[name="actual_price"], [name="offer_price"]').on('input', function () {
+            let actual = parseFloat($('[name="actual_price"]').val()) || 0;
+            let offer  = parseFloat($('[name="offer_price"]').val()) || 0;
 
-        $.ajax({
-            url: "{{ route('get-submenu', ':id') }}".replace(':id', subcategoryId),
-            type: "GET",
-            success: function (response) {
-                let html = '<option value="">Please select</option>';
-                $.each(response, function (id, name) {
-                    html += `<option value="${id}" ${id == selectedId ? 'selected' : ''}>${name}</option>`;
-                });
-                $('#submenu').html(html);
+            if (offer > 0 && offer < actual) {
+                let discount = ((actual - offer) / actual * 100).toFixed(0);
+
+                $('#discount_text').val(discount);     // UI
+                $('[name="discount"]').val(discount);  // DB
+            } else {
+                $('#discount_text').val('');
+                $('[name="discount"]').val('');
             }
         });
-    }
-
-    /* ===============================
-       ON PAGE LOAD (EDIT + VALIDATION)
-    =============================== */
-    if (selectedCategory) {
-        loadSubcategories(selectedCategory, selectedSubcategory);
-    }
-
-    /* ===============================
-       ON CHANGE EVENTS
-    =============================== */
-    $('#category').on('change', function () {
-        loadSubcategories(this.value);
-    });
-
-    $('#subcategory').on('change', function () {
-        loadSubmenus(this.value);
-    });
-
-    /* ===============================
-       PRODUCT TYPE → PAGES
-    =============================== */
-    $('#product_type').on('change', function () {
-        if ($(this).val() === 'book') {
-            $('#pages_row').removeClass('d-none');
-        } else {
-            $('#pages_row').addClass('d-none');
-        }
-    });
-
-    /* ===============================
-       DISCOUNT CALCULATION
-    =============================== */
-    $('[name="actual_price"], [name="offer_price"]').on('input', function () {
-        let actual = parseFloat($('[name="actual_price"]').val()) || 0;
-        let offer  = parseFloat($('[name="offer_price"]').val()) || 0;
-
-        if (offer > 0 && offer < actual) {
-            let discount = ((actual - offer) / actual * 100).toFixed(0);
-
-            $('#discount_text').val(discount);     // UI
-            $('[name="discount"]').val(discount);  // DB
-        } else {
-            $('#discount_text').val('');
-            $('[name="discount"]').val('');
-        }
-    });
 
 
-      $(document).on('click', '.delete-image', function() {
+        $(document).on('click', '.delete-image', function() {
             var imageId = $(this).data('id');
             var imageContainer = $(this).closest('.image-container');
 
@@ -483,17 +539,53 @@ $(document).ready(function () {
                 }
             });
         });
+        // ADD ROW
+        $(document).on('click', '.addRow', function () {
 
-});
+            let index = $('.colorSection').length;
+            index++;
+            let html = `
+            <div class="row colorSection mt-2">
+                <div class="mb-3 col-md-4">
+                    <label class="form-label">Select Colors</label>
+                    <select class="form-control" name="color[${index}][colors]" required>
+                        @foreach(App\Models\Color::all() as $color)
+                            <option value="{{ $color->id }}">{{ $color->color }}</option>
+                        @endforeach
+                    </select>
+                </div>
+
+                <div class="mb-3 col-md-4">
+                    <label class="form-label">Quantity</label>
+                    <input type="text"
+                        name="color[${index}][color_quantity]"
+                        class="form-control"
+                        placeholder="Ex: 2" required>
+                </div>
+
+                <div class="mb-3 col-md-2 d-flex align-items-end">
+                    <button type="button" class="btn btn-danger removeRow">−</button>
+                </div>
+            </div>
+            `;
+
+            $('#colorWrapper').append(html);
+        });
+
+        // REMOVE ROW
+        $(document).on('click', '.removeRow', function () {
+            $(this).closest('.colorSection').remove();
+        });
+    });
 </script>
 <script>
     $(document).ready(function () {
 
         function toggleColorSection() {
             if ($('input[name="is_color"]:checked').val() == '1') {
-                $('#colorSection').show();
+                $('#colorWrapper').show();
             } else {
-                $('#colorSection').hide();
+                $('#colorWrapper').hide();
             }
         }
 

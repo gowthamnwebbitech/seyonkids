@@ -37,7 +37,6 @@
 
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0/dist/css/select2.min.css" rel="stylesheet" />
 
     <div class="profile-tab">
         <div class="custom-tab-1">
@@ -329,25 +328,43 @@
                                         <label class="form-check-label" for="iscolor_no">No</label>
                                     </div>
                                 </div>
+                                <div id="colorWrapper">
+                                    <div class="row colorSection">
+                                        <div class="mb-3 col-md-4">
+                                            <label class="form-label">Select Colors</label>
 
-                                <div class="mb-3 col-md-4" id="colorSection">
-                                    <label class="form-label">Select Colors</label>
+                                            <select class="form-select" name="color[1][colors]" required>
+                                                <option value=""> -- select -- </option>
+                                                @foreach(App\Models\Color::all() as $color)
+                                                    <option value="{{ $color->id }}" {{ old('colors.1') == $color->id ? 'selected' : '' }}> {{ $color->color }}</option>
+                                                @endforeach
+                                            </select>
 
-                                    <select class="form-control color-multiselect"
-                                            name="colors[]"
-                                            multiple="multiple">
-                                            @php
-                                                $colors = App\Models\Color::all();
-                                            @endphp
-                                        @foreach($colors as $color)
-                                            <option value="{{ $color->id }}">{{ $color->color }}</option>
-                                        @endforeach
-                                    </select>
+                                            @error('colors.0')
+                                                <div class="text-danger">{{ $message }}</div>
+                                            @enderror
+                                        </div>
 
-                                    @error('colors')
-                                        <div class="text-danger">{{ $message }}</div>
-                                    @enderror
+                                        <div class="mb-3 col-md-4">
+                                            <label class="form-label">Quantity</label>
+
+                                            <input type="text"
+                                                name="color[1][color_quantity]"
+                                                class="form-control"
+                                                value="{{ old('quantity.1') }}"
+                                                placeholder="Ex: 2" required>
+
+                                            @error('quantity.0')
+                                                <div class="text-danger">{{ $message }}</div>
+                                            @enderror
+                                        </div>
+
+                                        <div class="mb-3 col-md-2 d-flex align-items-end">
+                                            <button type="button" class="btn btn-success addRow">+</button>
+                                        </div>
+                                    </div>
                                 </div>
+
                                 <button class="btn btn-primary" type="submit">Add Product</button>
                             </form>
                         </div>
@@ -361,17 +378,11 @@
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 <script src="https://cdn.ckeditor.com/4.16.2/standard/ckeditor.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0/dist/js/select2.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
 <script>
     $(document).ready(function() {
         CKEDITOR.replace('description');
-        $('.color-multiselect').select2({
-            placeholder: "Select Colors",
-            allowClear: true,
-            width: '100%'
-        });
     });
 </script>
 <script type="text/javascript">
@@ -442,6 +453,43 @@
             $('#category').val(selectedCategory);
             loadSubcategories(selectedCategory, selectedSubcategory);
         }
+        // ADD ROW
+        $(document).on('click', '.addRow', function () {
+
+            let index = $('.colorSection').length;
+            index++;
+            let html = `
+            <div class="row colorSection mt-2">
+                <div class="mb-3 col-md-4">
+                    <label class="form-label">Select Colors</label>
+                    <select class="form-control" name="color[${index}][colors]" required>
+                        @foreach(App\Models\Color::all() as $color)
+                            <option value="{{ $color->id }}">{{ $color->color }}</option>
+                        @endforeach
+                    </select>
+                </div>
+
+                <div class="mb-3 col-md-4">
+                    <label class="form-label">Quantity</label>
+                    <input type="text"
+                        name="color[${index}][color_quantity]"
+                        class="form-control"
+                        placeholder="Ex: 2" required>
+                </div>
+
+                <div class="mb-3 col-md-2 d-flex align-items-end">
+                    <button type="button" class="btn btn-danger removeRow">−</button>
+                </div>
+            </div>
+            `;
+
+            $('#colorWrapper').append(html);
+        });
+
+        // REMOVE ROW
+        $(document).on('click', '.removeRow', function () {
+            $(this).closest('.colorSection').remove();
+        });
     });
 </script>
 @if ($errors->any())
@@ -580,8 +628,8 @@
                 $('#discount_text').val(discountPercent);
                 $("[name='discount']").val(discountPercent); // numeric value
             } else {
-                $('#discount_text').val('');
-                $("[name='discount']").val('');
+                $('#discount_text').val(0);
+                $("[name='discount']").val(0);
             }
         }
 
@@ -607,9 +655,9 @@
 
         function toggleColorSection() {
             if ($('input[name="is_color"]:checked').val() == '1') {
-                $('#colorSection').show();
+                $('#colorWrapper').show();
             } else {
-                $('#colorSection').hide();
+                $('#colorWrapper').hide();
             }
         }
 

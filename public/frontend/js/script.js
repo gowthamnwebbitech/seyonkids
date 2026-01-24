@@ -405,12 +405,12 @@ setTimeout(() => {
 //     }, 300);
 // }
 // Remove item functionality
-document.querySelectorAll(".remove-btn").forEach((btn) => {
-    btn.addEventListener("click", function () {
-        this.closest(".cart-item").remove();
-        updateSubtotal();
-    });
-});
+// document.querySelectorAll(".remove-btn").forEach((btn) => {
+//     btn.addEventListener("click", function () {
+//         this.closest(".cart-item").remove();
+//         updateSubtotal();
+//     });
+// });
 
 // checkout page
 

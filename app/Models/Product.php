@@ -27,7 +27,9 @@ class Product extends Model
     }
     public function colors()
     {
-        return $this->belongsToMany(Color::class, 'color_product', 'product_id', 'color_id');
+        return $this->belongsToMany(Color::class, 'color_product')
+                    ->withPivot('id','qty')
+                    ->withTimestamps();
     }
     public function cart()
     {

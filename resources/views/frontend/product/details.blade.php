@@ -123,7 +123,7 @@
                                 @if ($productDetails->discount)
                                     <span class="offer-badge">{{ $productDetails->discount }}% OFF</span>
                                 @endif
-                                <p class="detail-para">Tax Included, <a href="#0"
+                                <p class="detail-para">Tax Included, <a href="{{ route('product.proceed_to_checkout')}}"
                                         style="text-decoration: underline">Shipping</a> Calculated at Checkout.</p>
                                 <style>
                                     .color_picker input {
@@ -166,15 +166,20 @@
                                             @foreach ($colors as $index => $color)
                                                 <input type="radio"
                                                     name="color"
-                                                    id="color-{{ $color->id }}"
-                                                    value="{{ $color->id }}"
-                                                    {{ ($selectedColor == $color->id || (!$selectedColor && $index === 0)) ? 'checked' : '' }}
-                                                    onchange="selectColor({{ $color->id }})" required>
+                                                    id="color-{{ $color->pivot->id }}"
+                                                    value="{{ $color->pivot->id }}"
+                                                    data-qty="{{ $color->pivot->qty }}"
+                                                    {{ (!$selectedColor && $index === 0) ? 'checked' : '' }}
+                                                    onchange="selectColor(this)"
+                                                    required>
 
-                                                <label for="color-{{ $color->id }}" title="{{ $color->color }}" style="background-color: {{ $color->color_code }}">
+                                                <label for="color-{{ $color->pivot->id }}"
+                                                    title="{{ $color->color }}"
+                                                    style="background-color: {{ $color->color_code }}">
                                                     <span style="background-color: {{ $color->color_code }}"></span>
                                                 </label>
                                             @endforeach
+
                                         </div>
                                     </div>
                                 @endif
@@ -208,12 +213,15 @@
                                         <button type="button" class="quantity-btn" id="decreaseBtn">
                                             <i class="fas fa-minus"></i>
                                         </button>
-                                        <input type="text" class="quantity-input" id="quantityInput" name="quantity"
-                                            value="1" maxlength="2" max="{{ $productDetails->quantity }}"
-                                            min="1" inputmode="numeric">
+                                        @if ($colors->isNotEmpty())
+                                            <input type="text" class="quantity-input" id="quantityInput" name="quantity" value="1" min="1" inputmode="numeric">
+                                        @else
+                                            <input type="text" class="quantity-input" id="quantityInput" name="quantity"
+                                                value="1" maxlength="2" max="{{ $productDetails->quantity }}"
+                                                min="1" inputmode="numeric">
+                                        @endif
                                         <button type="button" class="quantity-btn" id="increaseBtn">
-                                            <i class="fas fa-plus"></i>
-                                        </button>
+                                            <i class="fas fa-plus"></i></button>
                                     </div>
                                 </div>
 
@@ -229,12 +237,18 @@
                                                     GO TO CART
                                                 </a>
                                             @else
+                                            <input type="hidden" id="selectedColorId"
+                                                value="{{ $colors->first()->pivot->id ?? '' }}">
                                                 <!-- Not in cart -->
-                                                <a href="{{ route('addto.cart', $productDetails->id) }}" class="btn-add-cart"
-                                                    id="addToCartBtn" style="text-decoration: none">
-                                                    <i class="fas fa-shopping-cart"></i>
-                                                    ADD TO CART
+                                                <a href="{{ route('addto.cart', $productDetails->id) }}"
+                                                    class="btn-add-cart"
+                                                    id="addToCartBtn"
+                                                    style="text-decoration: none"
+                                                    onclick="return appendColorToCartUrl(this)">
+                                                        <i class="fas fa-shopping-cart"></i>
+                                                        ADD TO CART
                                                 </a>
+
                                             @endif
                                         @else
                                             <a href="{{ route('user.login') }}" class="btn-add-cart"
@@ -496,6 +510,66 @@
     {{-- Best Seller Products --}}
 @endsection
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script>
+function appendColorToCartUrl(el) {
+    const colorId = document.getElementById('selectedColorId').value;
+
+    if (!colorId) {
+        alert('Please select a color');
+        return false;
+    }
+
+    const baseUrl = el.getAttribute('href');
+    el.setAttribute('href', baseUrl + '?color_id=' + colorId);
+    return true;
+}
+</script>
+
+<script>
+    let maxQty = 1;
+
+    function selectColor(el) {
+        document.getElementById('selectedColorId').value = el.value;
+        maxQty = parseInt(el.dataset.qty) || 1;
+
+        const qtyInput = document.getElementById('quantityInput');
+
+        qtyInput.setAttribute('max', maxQty);
+
+        if (parseInt(qtyInput.value) > maxQty) {
+            qtyInput.value = maxQty;
+        }
+    }
+
+    // + button
+    document.getElementById('increaseBtn').addEventListener('click', function () {
+        const input = document.getElementById('quantityInput');
+        let val = parseInt(input.value) || 1;
+
+        if (val < maxQty) {
+            input.value = val + 1;
+        }
+    });
+
+    // − button
+    document.getElementById('decreaseBtn').addEventListener('click', function () {
+        const input = document.getElementById('quantityInput');
+        let val = parseInt(input.value) || 1;
+
+        if (val > 1) {
+            input.value = val - 1;
+        }
+    });
+
+    // On page load → initialize first selected color
+    document.addEventListener('DOMContentLoaded', function () {
+        const checkedColor = document.querySelector('input[name="color"]:checked');
+        if (checkedColor) {
+            selectColor(checkedColor);
+        }
+    });
+</script>
+
 <script>
     $(document).ready(function() {
         $("#decreaseBtn").on("click", function() {

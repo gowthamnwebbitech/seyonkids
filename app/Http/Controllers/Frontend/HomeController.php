@@ -21,6 +21,7 @@ use App\Mail\ContactFormMail;
 use App\Models\Address;
 use App\Models\CallToAction;
 use App\Models\Cart;
+use App\Models\ColorProduct;
 use App\Models\GiftWrap;
 use App\Models\MilestoneSetting;
 use App\Models\ShippingPrice;
@@ -29,16 +30,18 @@ use App\Models\ShopByPrice;
 use App\Models\ShopByReels;
 use App\Models\Wishlist;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Artisan;
 
 class HomeController extends Controller
 {
     public function index(){
+        // Artisan::call('migrate');
         $categories = ProductCategory::where('status', 1)->get();
         $shop_by_age = ShopByAge::where('status', 1)->orderBy('priority', 'asc')->get();
         $shop_by_prices = ShopByPrice::where('status', 1)->get();
         $shop_by_reels = ShopByReels::where('status', 1)->get();
         $call_to_actions = CallToAction::where('status', 1)->get()->keyBy('name');
-        $products = Product::where('status', 1)->get();
+        $products = Product::with('colors')->where('status', 1)->get();
         $new_arrivals = $products->where('new_arrival', 1);
         $best_seller = $products->where('best_sellers', 1);
         return view('frontend.index',compact('new_arrivals','shop_by_reels','best_seller','categories','shop_by_age','call_to_actions','shop_by_prices'));
@@ -322,27 +325,58 @@ class HomeController extends Controller
         return redirect()->route('show.cart.table')->with('success', 'Product added to cart successfully!');
     }
        
-    public function addToCart($id)
+    public function addToCart(Request $request, $id)
     {
-        $product = Product::findOrFail($id);
+        $product = Product::with('colors')->findOrFail($id);
 
+        // ✅ 1. Get color_id from request (URL / form)
+        $colorProductId = $request->input('color_id');
+
+        // ✅ 2. If not provided, fallback to first product color
+        if (!$colorProductId && $product->colors->isNotEmpty()) {
+            $colorProductId = $product->colors->first()->pivot->id;
+        }
+
+        // 🔍 Find cart item (product + color)
         $cartItem = Cart::where('user_id', Auth::id())
-                        ->where('product_id', $id)
-                        ->first();
+            ->where('product_id', $id)
+            ->where('color_id', $colorProductId)
+            ->first();
+
+        // 🔐 Color stock validation
+        if ($colorProductId) {
+            $colorStock = ColorProduct::find($colorProductId);
+
+            if (!$colorStock || $colorStock->qty <= 0) {
+                dd(123);
+                return back()->with('error', 'Selected color is out of stock');
+            }
+        }
 
         if ($cartItem) {
+
+            if ($colorProductId && ($cartItem->quantity + 1 > $colorStock->qty)) {
+                return back()->with('error', 'Not enough stock for selected color');
+            }
+
             $cartItem->increment('quantity');
+
         } else {
+
             Cart::create([
                 'user_id'    => Auth::id(),
                 'product_id' => $id,
+                'color_id'   => $colorProductId, // ✅ color_product.id OR null
                 'quantity'   => 1,
-                'price' => $product->offer_price,
+                'price'      => $product->offer_price,
             ]);
         }
 
-        if (request()->wantsJson()) {
-            return response()->json(['message' => 'Product added to cart successfully!']);
+        if ($request->wantsJson()) {
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Product added to cart successfully!'
+            ]);
         }
 
         return redirect()->back()->with('success', 'Product added to cart successfully!');
@@ -375,35 +409,30 @@ class HomeController extends Controller
         $cart = Cart::find($id);
 
         if (!$cart) {
-            session()->flash('error', 'Cart item not found');
             return response()->json(['status' => 'error', 'message' => 'Cart item not found']);
         }
 
-        $product = Product::find($cart->product_id);
+        $colorProduct = ColorProduct::find($cart->color_id);
 
-        if (!$product) {
-            return response()->json(['status' => 'error', 'message' => 'Product not found']);
+        if (!$colorProduct) {
+            return response()->json(['status' => 'error', 'message' => 'Color stock not found']);
         }
 
-        if ($product->quantity <= 0) {
+        if ($colorProduct->qty <= 0) {
             return response()->json(['status' => 'error', 'message' => 'Out of stock']);
         }
 
-        if ($cart->quantity + 1 > $product->quantity) {
-            return response()->json(['status' => 'error', 'message' => 'Not enough stock']);
+        if ($cart->quantity + 1 > $colorProduct->qty) {
+            return response()->json(['status' => 'error', 'message' => 'Not enough stock for this color']);
         }
 
         $cart->quantity += 1;
         $cart->save();
 
-        $subtotal = $cart->quantity * $cart->price;
-        session()->flash('success', 'Quantity updated successfully');
         return response()->json([
             'status' => 'success',
             'new_qty' => $cart->quantity,
-            'message' => 'Quantity updated successfully',
-            'product_stock' => $product->quantity,
-            'subtotal' => number_format($subtotal, 2)
+            'available_stock' => $colorProduct->qty
         ]);
     }
 
@@ -412,86 +441,75 @@ class HomeController extends Controller
         $cart = Cart::find($id);
 
         if (!$cart) {
+            return response()->json(['status' => 'error', 'message' => 'Cart item not found']);
+        }
+
+        if ($cart->quantity <= 1) {
+            return response()->json(['status' => 'error', 'message' => 'Minimum quantity is 1']);
+        }
+
+        $cart->quantity -= 1;
+        $cart->save();
+
+        return response()->json([
+            'status' => 'success',
+            'new_qty' => $cart->quantity
+        ]);
+    }
+
+    public function increaseCartQty($id)
+    {
+        $cart = Cart::find($id);
+
+        if (!$cart) {
             return response()->json([
                 'status' => 'error',
                 'message' => 'Cart item not found'
             ]);
         }
 
-        $product = Product::find($cart->product_id);
+        // IMPORTANT: color-wise stock
+        $colorProduct = ColorProduct::find($cart->color_id);
 
-        if (!$product) {
+        if (!$colorProduct) {
             return response()->json([
                 'status' => 'error',
-                'message' => 'Product not found'
+                'message' => 'Color stock not found'
             ]);
         }
 
-        if ($cart->quantity <= 1) {
+        if ($colorProduct->qty <= 0) {
             return response()->json([
                 'status' => 'error',
-                'message' => 'Minimum quantity is 1'
+                'message' => 'Out of stock for this color'
             ]);
         }
 
-        $cart->quantity -= 1;
-        $cart->save();
-
-        $subtotal = $cart->quantity * $cart->price;
-
-        return response()->json([
-            'status' => 'success',
-            'new_qty' => $cart->quantity,
-            'product_stock' => $product->quantity,
-            'subtotal' => number_format($subtotal, 2)
-        ]);
-    }
-
-    public function increaseCartQty($id){
-        $cart = Cart::find($id);
-
-        if (!$cart) {
-            return response()->json(['status' => 'error', 'message' => 'Cart item not found']);
-        }
-
-        $product = Product::find($cart->product_id);
-
-        if (!$product) {
-            return response()->json(['status' => 'error', 'message' => 'Product not found']);
-        }
-
-        if ($product->quantity <= 0) {
-            return response()->json(['status' => 'error', 'message' => 'Out of stock']);
-        }
-
-        if ($cart->quantity + 1 > $product->quantity) {
-            return response()->json(['status' => 'error', 'message' => 'Not enough stock']);
+        if ($cart->quantity + 1 > $colorProduct->qty) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Not enough stock for selected color'
+            ]);
         }
 
         $cart->quantity += 1;
         $cart->save();
+
         return response()->json([
             'status' => 'success',
             'new_qty' => $cart->quantity,
+            'available_stock' => $colorProduct->qty
         ]);
     }
 
-    public function decreaseCartQty($id){
+    public function decreaseCartQty($id)
+    {
         $cart = Cart::find($id);
 
         if (!$cart) {
             return response()->json([
                 'status' => 'error',
                 'message' => 'Cart item not found'
-            ]);
-        }
-
-        $product = Product::find($cart->product_id);
-
-        if (!$product) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Product not found'
             ]);
         }
 
@@ -507,13 +525,26 @@ class HomeController extends Controller
 
         return response()->json([
             'status' => 'success',
-            'new_qty' => $cart->quantity,
+            'new_qty' => $cart->quantity
         ]);
     }
+
     public function getCart()
     {
-        $cartItems = Cart::with('product')->where('user_id', auth()->id())->get();
-
+        $cartItems = Cart::with([
+            'product:id,product_name,offer_price,product_img',
+            'colorData.color:id,color,color_code'
+        ])
+        ->where('user_id', auth()->id())
+        ->get()
+        ->map(function ($item) {
+            return [
+                'id' => $item->id,
+                'quantity' => $item->quantity,
+                'product' => $item->product,
+                'colorData' => optional($item->colorData)->color,
+            ];
+        });
         return response()->json($cartItems);
     }
     public function applyCoupon(Request $request)
@@ -660,11 +691,10 @@ class HomeController extends Controller
         $request->validate([
             'product_id' => 'required|exists:products,id',
             'quantity'   => 'nullable|integer|min:1',
-            'color'      => 'nullable|exists:colors,id',
+            'color'      => 'nullable|exists:color_product,id',
         ]);
 
         $product = Product::findOrFail($request->product_id);
-
         // ✅ If product has colors, color is mandatory
         if ($product->is_color == 1 && !$request->filled('color')) {
             return back()->with('error', 'Please select a color');
@@ -673,7 +703,7 @@ class HomeController extends Controller
         // ✅ Validate color belongs to this product
         if ($request->filled('color')) {
             $validColor = $product->colors()
-                ->where('colors.id', $request->color)
+                ->where('color_product.id', $request->color)
                 ->exists();
 
             if (!$validColor) {
@@ -692,6 +722,7 @@ class HomeController extends Controller
 
         if ($cartItem) {
             $cartItem->quantity = $quantity;
+            $cartItem->color_id = $colorId;
             $cartItem->save();
         } else {
             Cart::create([

@@ -391,13 +391,36 @@
                                         </a>
                                     </div>
                                 </div>
-
                                 <div class="card-body p-2">
-                                    <p class="card-title small text-truncate-2 mb-1">{{ $new_arrival->product_name }}</p>
-                                    <div class="price small">
-                                        <span class="text-danger fw-semibold">₹{{ $new_arrival->offer_price }}</span>
-                                        <span
-                                            class="text-muted text-decoration-line-through">₹{{ $new_arrival->orginal_rate }}</span>
+                                    <p class="card-title small text-truncate-2 mb-1">
+                                        {{ \Illuminate\Support\Str::limit($new_arrival->product_name, 15) }}
+                                    </p>
+                                    <div class="price small d-flex align-items-center gap-2 flex-wrap">
+                                        <span class="text-danger text-decoration-line-through" style="color:red !important">₹{{ $new_arrival->orginal_rate }}</span>
+                                        <span class="fw-semibold">₹{{ $new_arrival->offer_price }}</span>
+                                        @php
+                                            $colors = $new_arrival->colors;
+                                            $selectedColor = request('color') ?? optional($new_arrival)->color;
+                                        @endphp
+
+                                        <div class="color_picker d-flex align-items-center gap-1 ms-2">
+                                            @foreach ($colors as $index => $color)
+                                                {{-- <input type="radio"
+                                                    name="color"
+                                                    id="color-{{ $color->id }}"
+                                                    value="{{ $color->id }}"
+                                                    class="d-none"
+                                                    {{ (request('color') == $color->id || (!request('color') && $index === 0)) ? 'checked' : '' }}
+                                                    onchange="selectColor({{ $color->id }})"
+                                                    required> --}}
+
+                                                <label for="color-{{ $color->id }}"
+                                                    title="{{ $color->color }}"
+                                                    class="color-dot"
+                                                    style="background-color: {{ $color->color_code }}">
+                                                </label>
+                                            @endforeach
+                                        </div>
                                     </div>
                                 </div>
 
@@ -458,6 +481,14 @@
             <!-- Responsive grid: 2 cols on xs, 3 on md, 4 on lg, 5 on xl+ -->
             <div class="best-seller row row-cols-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-5">
                 <!-- CARD -->
+                <style>
+                    .color_picker .color-dot {
+                        width: 14px;
+                        height: 16px;
+                        border-radius: 55%;
+                        gap: -0.75rem!important;
+                    }
+                </style>
                 @foreach ($best_seller as $seller)
                     <div class="col">
                         <div class="card product-card1 mb-3">
@@ -504,11 +535,35 @@
                                 </div>
                             </div>
                             <div class="card-body">
-                                <p class="card-title small text-truncate-2 mb-1">{{ $seller->product_name }}</p>
-                                <div class="price small">
-                                    <span class="text-danger fw-semibold">₹{{ $seller->offer_price }}</span>
-                                    <span
-                                        class="text-muted text-decoration-line-through">₹{{ $seller->orginal_rate }}</span>
+                                <p class="card-title small text-truncate-2 mb-1">
+                                    {{ \Illuminate\Support\Str::limit($seller->product_name, 15) }}
+                                </p>
+                                <div class="price small d-flex align-items-center gap-2 flex-wrap">
+                                    <span class="text-danger text-decoration-line-through" style="color:red !important">₹{{ $seller->orginal_rate }}</span>
+                                    <span class="fw-semibold">₹{{ $seller->offer_price }}</span>
+                                    @php
+                                        $colors = $seller->colors;
+                                        $selectedColor = request('color') ?? optional($seller)->color;
+                                    @endphp
+
+                                    <div class="color_picker d-flex align-items-center ms-2">
+                                        @foreach ($colors as $index => $color)
+                                            {{-- <input type="radio"
+                                                name="color"
+                                                id="color-{{ $color->id }}"
+                                                value="{{ $color->id }}"
+                                                class="d-none"
+                                                {{ (request('color') == $color->id || (!request('color') && $index === 0)) ? 'checked' : '' }}
+                                                onchange="selectColor({{ $color->id }})"
+                                                required> --}}
+
+                                            <label for="color-{{ $color->id }}"
+                                                title="{{ $color->color }}"
+                                                class="color-dot"
+                                                style="background-color: {{ $color->color_code }}">
+                                            </label>
+                                        @endforeach
+                                    </div>
                                 </div>
                             </div>
                         </div>

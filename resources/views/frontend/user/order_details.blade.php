@@ -140,8 +140,29 @@
                                                     </div>
 
                                                 </td>
-                                                <td><a style="line-height:20px;"
-                                                        href="">{{ $item->productname }}</a></td>
+                                                <td>
+                                                    <a style="line-height:20px;"
+                                                        href="">{{ $item->productname }}</a>
+                                                        <style>
+                                                            .color_picker label {
+                                                                border: 1px solid #b5b5b5;
+                                                                border-radius: 10px;
+                                                                display: inline-block;
+                                                                width: 15px;
+                                                                height: 15px;
+                                                                margin-right: 4px;
+                                                            }
+                                                        </style>
+                                                    <div class="color_picker ms-2">
+                                                        @if($item->color_id && $item->colorData)
+                                                            @if($item->colorData)
+                                                                <label for="color" title="{{ $item->colorData->color->color }}" style="background-color: {{ $item->colorData->color->color_code }}">
+                                                                    <span style="background-color: {{ $item->colorData->color->color_code }}"></span>
+                                                                </label>
+                                                            @endif
+                                                        @endif
+                                                    </div>
+                                                </td>
                                                 <td class="price">₹ {{ $item->offer_price }}</td>
                                                 <td> {{ $item->quantity }} Nos
                                                 </td>

@@ -169,6 +169,19 @@ function cartList() {
                 let total = item.quantity * item.product.offer_price;
                 subtotal += total;
 
+                // ---- COLOR HTML (FIXED) ----
+                let colorHtml = '';
+
+                if (item.colorData) {
+                    colorHtml = `
+                        <label
+                            title="${item.colorData.color}"
+                            class="color-dot"
+                            style="background-color:${item.colorData.color_code}">
+                        </label>
+                    `;
+                }
+
                 html += `
                 <div class="cart-item p-2">
                     <div class="item-image">
@@ -184,7 +197,13 @@ function cartList() {
                             <button class="qty-btn increase" data-id="${item.id}">+</button>
                         </div>
 
-                        <div class="item-price">₹ ${total}</div>
+                        <div class="d-flex align-items-center gap-2 mt-1">
+                            <div class="item-price">₹ ${total}</div>
+
+                            <div class="color_picker d-flex align-items-center gap-1">
+                                ${colorHtml}
+                            </div>
+                        </div>
                     </div>
 
                     <button class="remove-btn" onclick="removeCart(${item.id})">

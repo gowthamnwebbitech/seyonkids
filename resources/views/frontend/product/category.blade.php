@@ -282,16 +282,62 @@
                                                 title="Add to cart"><i class="bi bi-cart"></i></a>
                                         </div>
                                     </div>
+                                    <style>
+                                        .color_picker .color-dot {
+                                            width: 18px;
+                                            height: 18px;
+                                            border-radius: 50%;
+                                            cursor: pointer;
+                                            border: 1px solid #ccc;
+                                            display: inline-block;
+                                        }
+
+                                        .color_picker input[type="radio"]:checked + .color-dot {
+                                            border: 2px solid #000;
+                                        }
+                                    </style>
                                     <div class="card-body p-2">
-                                        <p class="card-title small text-truncate-2 mt-3">
-                                            {{ $data->product_name }}</p>
-                                        <div class="price small">
-                                            <span class="text-danger fw-semibold">₹ {{ $data->offer_price ?? '-' }}</span>
-                                            @if (!empty($data->original_price))
-                                                <span class="text-muted text-decoration-line-through">₹
-                                                    {{ $data->original_price }}</span>
+                                        <p class="card-title small text-truncate-2 mb-1">
+                                            {{ \Illuminate\Support\Str::limit($data->product_name, 15) }}
+                                        </p>
+                                        <div class="price small d-flex align-items-center gap-2 flex-wrap">
+
+                                            @if (!empty($data->orginal_rate))
+                                                <span class="text-danger text-decoration-line-through">
+                                                    ₹ {{ $data->orginal_rate }}
+                                                </span>
                                             @endif
+
+                                            <span class="text-danger fw-semibold">
+                                                ₹ {{ $data->offer_price ?? '-' }}
+                                            </span>
+
+                                            @php
+                                                $colors = $data->colors;
+                                                $selectedColor = request('color') ?? optional($data)->color;
+                                            @endphp
+
+                                            <div class="color_picker d-flex align-items-center gap-1 ms-2">
+                                                @foreach ($colors as $index => $color)
+                                                    {{-- <input type="radio"
+                                                        name="color"
+                                                        id="color-{{ $color->id }}"
+                                                        value="{{ $color->id }}"
+                                                        class="d-none"
+                                                        {{ (request('color') == $color->id || (!request('color') && $index === 0)) ? 'checked' : '' }}
+                                                        onchange="selectColor({{ $color->id }})"
+                                                        required> --}}
+
+                                                    <label for="color-{{ $color->id }}"
+                                                        title="{{ $color->color }}"
+                                                        class="color-dot"
+                                                        style="background-color: {{ $color->color_code }}">
+                                                    </label>
+                                                @endforeach
+                                            </div>
+
                                         </div>
+
                                     </div>
                                 </div>
                             </div>

@@ -15,7 +15,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\InvoiceMail;
 use App\Helper\Helper;
-
+use App\Models\ColorProduct;
 
 class PaymentController extends Controller
 {
@@ -80,6 +80,10 @@ class PaymentController extends Controller
                 $product = Product::find($cartItem->product_id);
                 if ($product) {
                     $product->decrement('quantity', $cartItem->quantity);
+                }
+                if ($cartItem->color_id) {
+                    $colorProduct = ColorProduct::find($cartItem->color_id);
+                    $colorProduct->decrement('qty', $cartItem->quantity);
                 }
 
                 OrderDetail::create([
@@ -179,6 +183,10 @@ class PaymentController extends Controller
                 $product = Product::find($cartItem->product_id);
                 if ($product) {
                     $product->decrement('quantity', $cartItem->quantity);
+                }
+                if ($cartItem->color_id) {
+                    $colorProduct = ColorProduct::find($cartItem->color_id);
+                    $colorProduct->decrement('qty', $cartItem->quantity);
                 }
 
                 OrderDetail::create([

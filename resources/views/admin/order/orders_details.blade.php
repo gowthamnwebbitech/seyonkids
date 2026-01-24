@@ -159,8 +159,8 @@
                                             <div class="color_picker ms-2">
                                                 @if($item->color_id && $item->colorData)
                                                     @if($item->colorData)
-                                                        <label for="color" title="{{ $item->colorData->color }}" style="background-color: {{ $item->colorData->color_code }}">
-                                                            <span style="background-color: {{ $item->colorData->color_code }}"></span>
+                                                        <label for="color" title="{{ $item->colorData->color->color }}" style="background-color: {{ $item->colorData->color->color_code }}">
+                                                            <span style="background-color: {{ $item->colorData->color->color_code }}"></span>
                                                         </label>
                                                     @endif
                                                 @endif
